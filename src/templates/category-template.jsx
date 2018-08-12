@@ -23,24 +23,7 @@ export default CategoryTemplate;
 export const pageQuery = graphql`
   query CategoryPage($category: String) {
     site {
-      siteMetadata {
-        title
-        subtitle
-        copyright
-        menu {
-          label
-          path
-        }
-        author {
-          name
-          email
-          twitter
-          github
-          linkedin
-          stackoverflow
-          rss
-        }
-      }
+      ...SiteMetadata
     }
     allMarkdownRemark(
         limit: 1000,

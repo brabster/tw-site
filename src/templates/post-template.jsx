@@ -26,17 +26,7 @@ export default PostTemplate;
 export const pageQuery = graphql`
   query PostBySlug($slug: String!) {
     site {
-      siteMetadata {
-        title
-        subtitle
-        copyright
-        author {
-          name
-          twitter
-        }
-        disqusShortname
-        url
-      }
+      ...SiteMetadata
     }
     markdownRemark(fields: { slug: { eq: $slug } }) {
       id

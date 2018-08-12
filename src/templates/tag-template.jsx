@@ -23,24 +23,7 @@ export default TagTemplate;
 export const pageQuery = graphql`
   query TagPage($tag: String) {
     site {
-      siteMetadata {
-        title
-        subtitle
-        copyright
-        menu {
-          label
-          path
-        }
-        author {
-          name
-          email
-          twitter
-          github
-          linkedin
-          stackoverflow
-          rss
-        }
-      }
+      ...SiteMetadata
     }
     allMarkdownRemark(
         limit: 1000,

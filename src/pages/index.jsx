@@ -31,27 +31,35 @@ class IndexRoute extends React.Component {
 
 export default IndexRoute;
 
+export const fragmentAuthor = graphql`
+  fragment SiteMetadata on Site {
+    siteMetadata {
+      title
+      subtitle
+      copyright
+      disqusShortname
+      url
+      menu {
+        label
+        path
+      }
+      author {
+        name
+        email
+        twitter
+        github
+        linkedin
+        stackoverflow
+        rss
+      }
+    }
+  }
+`
+
 export const pageQuery = graphql`
   query IndexQuery {
     site {
-      siteMetadata {
-        title
-        subtitle
-        copyright
-        menu {
-          label
-          path
-        }
-        author {
-          name
-          email
-          twitter
-          github
-          linkedin
-          stackoverflow
-          rss
-        }
-      }
+      ...SiteMetadata
     }
     allMarkdownRemark(
         limit: 1000,
