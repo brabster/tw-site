@@ -4,7 +4,6 @@ import '../../assets/fonts/fontello-771c82e0/css/fontello.css';
 
 class Links extends React.Component {
   render() {
-    console.log(this.props.data)
     const author = this.props.data;
 
     return (

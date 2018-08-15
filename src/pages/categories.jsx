@@ -7,7 +7,6 @@ import Sidebar from '../components/Sidebar';
 class CategoriesRoute extends React.Component {
   render() {
     const { title } = this.props.data.site.siteMetadata;
-    console.log(this.props.data)
     const categories = this.props.data.allMarkdownRemark.group;
 
     return (
