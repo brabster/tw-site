@@ -50,14 +50,13 @@ module.exports = {
         feeds: [
           {
             serialize: ({ query: { site, allMarkdownRemark } }) => (
-              allMarkdownRemark.edges.map(edge =>
-                Object.assign({}, edge.node.frontmatter, {
-                  description: edge.node.frontmatter.description,
-                  date: edge.node.frontmatter.date,
-                  url: site.siteMetadata.site_url + edge.node.fields.slug,
-                  guid: site.siteMetadata.site_url + edge.node.fields.slug,
-                  custom_elements: [{ 'content:encoded': edge.node.html }]
-                }))
+              allMarkdownRemark.edges.map(edge => Object.assign({}, edge.node.frontmatter, {
+                description: edge.node.frontmatter.description,
+                date: edge.node.frontmatter.date,
+                url: site.siteMetadata.site_url + edge.node.fields.slug,
+                guid: site.siteMetadata.site_url + edge.node.fields.slug,
+                custom_elements: [{ 'content:encoded': edge.node.html }]
+              }))
             ),
             query: `
               {
@@ -140,14 +139,13 @@ module.exports = {
               }
           }`,
         output: '/sitemap.xml',
-        serialize: ({ site, allSitePage }) =>
-          allSitePage.edges.map((edge) => {
-            return {
-              url: site.siteMetadata.url + edge.node.path,
-              changefreq: 'daily',
-              priority: 0.7
-            };
-          })
+        serialize: ({ site, allSitePage }) => allSitePage.edges.map((edge) => {
+          return {
+            url: site.siteMetadata.url + edge.node.path,
+            changefreq: 'daily',
+            priority: 0.7
+          };
+        })
       }
     },
     'gatsby-plugin-offline',
