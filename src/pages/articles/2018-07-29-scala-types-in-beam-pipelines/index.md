@@ -31,29 +31,27 @@ Using Scala's `type` keyword to alias common types can bring more clarity to you
 
 At this point, I think I need an example.
 Let's say we're processing simple web server access logs.
+I want to know how many times each user accesses each URL and the status code they received.
 
-Our story looks a little like this:
-
-  As a ...
-  I want to know how many times each user accesses each URL and the status code they received
-  So that ...
-
-Our log lines look like this:
+Here's an example of a line from our logs:
 
     1.2.3.4,bob,2017-01-01T00:00:00.001Z,/,200
 
-So we first write a case class and a parse function to turn these useless strings into something nicer to work with.
+We don't need to worry too much about where the logs are coming from.
+Aside from this just being an example,
+Beam has numerous adapters for different data sources.
+
+I first write a case class and a parse function to turn these useless strings of characters into something nicer to work with.
 
 ```scala
 object AccessLog {
 
   case class Entry(clientIp: String, userId: String, timestamp: Instant, path: String, statusCode: Int)
 
-  def parseLine(line: String): Entry = {
-    val parts = line.split(",")
-    Entry(parts(0), parts(1), new Instant(parts(2)), parts(3), parts(4).toInt)
+  def parseLine(line: String): Entry = line.split(",") match {
+    case Array(clientIp, userId, timestamp, path, statusCode) =>
+      Entry(clientIp, userId, new Instant(timestamp), path, statusCode.toInt)
   }
-
 }
 ```
 
@@ -90,12 +88,14 @@ sc.textFile(args("input"))
 // SCollection[((String, String, Int), Long)]
 ```
 
-It's not too difficult to remember these things, but I'd rather not have to.
-This is also a very simple pipeline - trying to keep track of what is what with more complex pipelines gets much harder!
+This is a very simple pipeline.
+When you've got something more complex it gets harder to keep track of what these types mean,
+and when you are working with more than one pipeline it's harder still.
+The type system can help more than it is, so let's use it.
 
-## Once More, With Types
+## Once More, With Type Alases
 
-OK, so let's back up, and use scala's `type` keyword to make the type signatures a bit more useful.
+OK, so let's back up, and use Scala's `type` keyword to make the type signatures a bit more useful.
 Our parsing function is a convenient place to introduce additional type information to flow through the pipeline.
 
 ```scala
@@ -106,7 +106,11 @@ type StatusCode = Int
 case class Entry(clientIp: ClientIp, userId: UserId, timestamp: Instant, path: Path, statusCode: StatusCode)
 ```
 
-That's it. Everything still type-checks. Let's retrace our steps and see how these new types help us out.
+That's it.
+Everything still type-checks, as the "real" types haven't changed.
+Our new aliases will now flow through the pipeline code,
+allowing us to see what the types really meant at each point.
+Let's retrace our steps and see how these new types help us out.
 This time, I'll comment the types at each step for brevity.
 
 ```scala
@@ -119,12 +123,11 @@ sc.textFile(args("input"))
   // SCollection[((UserId, Path, StatusCode), Long)]
 ```
 
-An IDE like IntelliJ will tell you what the values you're dealing with as you code.
-It's not a lot of extra thinking or code for a significant increase in the amount of information you have as you're writing
+An IDE like IntelliJ (keyboard shortcut Alt-=, probably something slightly different on a Mac) will tell you what the values you're dealing with as you code.
+The type alias syntax is concise too, much better than having to create classes.
+It's not a lot of extra thinking or typing for a significant increase in the amount of information you have as you're writing
 or debugging a pipeline.
-
-These benefits don't just apply when you're using Apache Beam.
-The type information provides the same clarity when you're mapping, folding and so forth
-in normal Scala code.
+The custom parse function early in the pipeline provides a neat starting point to inject this type information
+and have it flow through the rest of our pipeline.
 
 Source code for this example can be found at https://github.com/brabster/beam-scala-types-example
