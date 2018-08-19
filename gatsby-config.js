@@ -152,6 +152,15 @@ module.exports = {
     'gatsby-plugin-catch-links',
     'gatsby-plugin-react-helmet',
     'gatsby-plugin-postcss-sass',
-    'gatsby-plugin-netlify'
+    {
+      resolve: 'gatsby-plugin-netlify',
+      options: {
+        headers: {
+          '/*': [
+            'X-Frame-Options: DENY'
+          ]
+        }
+      }
+    }
   ]
 };
