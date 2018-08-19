@@ -1,3 +1,13 @@
+const cspDirectives = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline' https://www.google-analytics.com",
+  'font-src https://fonts.googleapis.com https://fonts.gstatic.com',
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+  "img-src 'self' https://www.google-analytics.com"
+];
+
+const directivesToCspHeader = headers => headers.join(';');
+
 module.exports = {
   siteMetadata: {
     url: 'https://tempered.works',
@@ -160,7 +170,7 @@ module.exports = {
             'X-Frame-Options: DENY',
             'X-XSS-Protection: 1; mode=block',
             'X-Content-Type-Options: nosniff',
-            "Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://www.google-analytics.com; font-src https://fonts.googleapis.com https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' https://www.google-analytics.com ",
+            `Content-Security-Policy: ${directivesToCspHeader(cspDirectives)}`,
             'Referrer-Policy: no-referrer-when-downgrade'
           ]
         }
