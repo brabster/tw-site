@@ -1,133 +1,110 @@
 ---
-title: "Scala Types in Scio Pipelines"
-date: "2018-07-29T10:36:22.440Z"
+title: "Setting up this site with GatsbyJS"
+date: "2018-08-19T11:24:25Z"
 layout: post
 draft: false
-path: "/posts/scala-types-in-scio-pipelines"
-category: "Data Engineering"
+path: "/posts/setting-up-tempered-dot-works-with-gatsbyjs"
+category: "Web Development"
 tags:
- - "scala"
- - "apache-beam"
- - "scio"
- - "data-engineering"
- - "development"
-description: "For very little effort, Scala's Type Aliases can help you keep track of what means what in your Scio Beam pipelines."
+ - "gatsbyjs"
+ - "tempered-works"
+ - "blogging"
+ - "web-development"
+ - "static-sites"
+description: "GatsbyJS is a GraphQL and React-based static site generator that aims to produce really fast sites. Here's what happened when I used it to set up the tempered.works website."
 ---
 
-Data pipelines in [Apache Beam](https://beam.apache.org/) have a distinctly functional flavour, whichever language you use. That's because they can be distributed over a cluster of machines, so careful management of state and side-effects is important.
+Every company needs a website, and Tempered Works is no exception!
+Having bought the domain names when I set the company up, I've been putting off getting a website up and running because I'm not really a front-end creative type.
+When I heard [Jason Lengstorf](https://twitter.com/jlengstorf) talking to [The Changelog](https://changelog.com/podcast/306) about [GatsbyJS](https://www.gatsbyjs.org/),
+I was intrigued... so I tried it out.
 
-[Spotify's Scio](https://github.com/spotify/scio) is an excellent Scala API for Beam.
-Scala's functional ideas help to cut out much of the boilerplate present in the native Java API.
+## Why GatsbyJS?
 
-Scio makes good use of Scala's tuple types, in particular pairs `(x, y)`.
-Its [PairSCollectionFunctions](https://spotify.github.io/scio/api/com/spotify/scio/values/PairSCollectionFunctions.html)
-add some neat, expressive functionality to the standard [SCollection](https://spotify.github.io/scio/api/com/spotify/scio/values/SCollection.html)
-to compute values based on pairs.
+I think [GatsbyJS](https://www.gatsbyjs.org/) is interesting when compared to other static site generators because it's based on GraphQL and React.
+I've never worked with React, so there's an opportunity to learn about that, but I think the GraphQL part is most interesting.
+The idea is that you can generate content on your site based on queries to other datasources.
+The queries are done at build time, so you still get a static site, with the associated benefits.
+Benefits like fewer security considerations (although there are still some - we'll get back to that),
+many options for cheap or free hosting, great reliability and the potential for super-fast page load times.
 
-That capability lets you write really concise code, but can make it hard to make sense of types in the middle of your pipeline.
-Using Scala's `type` keyword to alias common types can bring more clarity to your code.
+## Where to Start?
 
-## An Example: Counting in Access Logs
+Gatsby provides loads of "[starters](https://www.gatsbyjs.org/docs/gatsby-starters/)", projects you can use as a basis for your own.
+A quick look down the list and I settled for [gatsby-starter-lumen](https://github.com/alxshelepenok/gatsby-starter-lumen).
+I felt it had a clean, professional look, and it seemed really quick on page loads.
+A quick `gatsby new my-blog https://github.com/alxshelepenok/gatsby-starter-lumen` later, and I had a basic project.
 
-At this point, I think I need an example.
-Let's say we're processing simple web server access logs.
-I want to know how many times each user accesses each URL and the status code they received.
+## Where does GraphQL fit?
 
-Here's an example of a line from our logs:
+After creating a dummy blog post and `gatsby develop`-ing my site up on `localhost:8000`,
+I decided to add social links for [linkedin](https://linkedin.com) and [stackoverflow](https://stackoverflow.com).
+Each component and each page looks up the data it needs with a GraphQL query.
+Where were the social links coming from?
 
-    1.2.3.4,bob,2017-01-01T00:00:00.001Z,/,200
+The social links appear in the sidebar on every page,
+so the details are kept in the [gatsby-config.js](https://github.com/alxshelepenok/gatsby-starter-lumen/blob/2a6e053ab9d3e8f9f3d2e6b511436f8c8e727f6e/gatsby-config.js) file,
+under `siteMetadata > author`.
+This config file is available to query, and each page does exactly that.
+For example, the index page uses [this query](https://github.com/alxshelepenok/gatsby-starter-lumen/blob/2a6e053ab9d3e8f9f3d2e6b511436f8c8e727f6e/src/pages/index.jsx#L34).
+These pieces of data are then rendered in the [Links](https://github.com/alxshelepenok/gatsby-starter-lumen/blob/2a6e053ab9d3e8f9f3d2e6b511436f8c8e727f6e/src/components/Links/index.jsx#L18)
+component, which is used in the Sidebar component, which is itself used in almost every page.
 
-We don't need to worry too much about where the logs are coming from.
-Aside from this just being an example,
-Beam has numerous adapters for different data sources.
+So - to add these links, I need to:
+- add the details for my new social links to `gatsyby-config.js`,
+- update the queries to fetch those new links,
+- update the `Links` component to render the new links.
 
-I first write a case class and a parse function to turn these useless strings of characters into something nicer to work with.
+Unfortunately, I need to update the query to include the new links on *every* page that uses the sidebar!
+That got tedious fast, but Gatsby and GraphQL have a solution - fragments.
+After defining a query fragment to fetch the author details,
+I swapped the fragment into every query that used the author details.
+Adding or removing author details can now be done in one place.
+[Gatsby's GraphQL document](https://www.gatsbyjs.org/docs/querying-with-graphql/) is a must-read!
 
-```scala
-object AccessLog {
+## Why Host when you can Netlify!
 
-  case class Entry(clientIp: String, userId: String, timestamp: Instant, path: String, statusCode: Int)
+[Netlify](https://netlify.com) was the obvious choice to host this site.
+It's free for a simple, single-user site like this and it knows how to deploy a Gatsby site.
+All I had to do was authorise access to my Github account, select the repository I wanted to deploy and wait a few seconds
+for the site served on a https:// URL with a randomly generated host to build and deploy.
+That leads us neatly to security and performance!
 
-  def parseLine(line: String): Entry = line.split(",") match {
-    case Array(clientIp, userId, timestamp, path, statusCode) =>
-      Entry(clientIp, userId, new Instant(timestamp), path, statusCode.toInt)
-  }
-}
-```
+## What About Security?
 
-Now, we can build a pipeline starting with this parse function.
-We'll build up the pipeline step by step, detailing the type signature at each point.
-The type at the end of the pipeline will be indicated with a comment on the next line.
+Even though this is a static site, there are still ways it could be abused.
+We don't have the traditional backend attack vectors because we don't have a server or a database.
+Bad actors could still get creative with JavaScript, iframes, and so on to compromise *your* computer or influence what you're seeing on this site.
+I used [Mozilla's Observatory](https://observatory.mozilla.org) to scan the site that Netlify launched for me, and it got a D+ rating.
+Could be worse, I guess, but that's not good enough!
 
-```scala
-sc.textFile(args("input"))
-  .map(AccessLog.parseLine)
+It's possible to influence the headers that Netlify serves.
+To keep things tidy, there's [gatsby-plugin-netlify](https://www.gatsbyjs.org/packages/gatsby-plugin-netlify/) a Gatsby plugin that can make the header configuration part of your Gatsby configuration.
+I started by adding the headers that Observatory recommended, to get an A+ rating.
+Then I relaxed the rules until the site worked again!
 
-// SCollection[AccessLog.Entry]
-```
+I like that approach, particularly when I'm using an open source project like Gatsby and the Lumen theme,
+because you essentially get a guided tour of what the site is doing that has security implications.
+It took  about 10 commits before I was happy-ish with the headers and the site was working without any errors in the JavaScript console.
+The site gets a B+ right now, with the remaining issues being slightly-too-lax Content Security Policy specifications.
+It looks like the Gatsby team is [working on dealing with those remaining issues](https://github.com/gatsbyjs/gatsby/issues/3758).
 
-So far so good. Now, let's map `AccessLog.Entry` onto the key we want to group by.
+## What about Performance?
 
-```scala
-sc.textFile(args("input"))
-  .map(AccessLog.parseLine)
-  .map(x => (x.userId, x.path, x.statusCode))
+A similar approach to benchmark performance, using Google's [Page Speed](https://developers.google.com/speed/pagespeed/insights/) tool.
+Right now, we're getting 51% on the mobile optimisation benchmark, and 89% on the desktop benchmark.
+Whilst the site feels very snappy to me, there's probably work to do there, but at least I have a measurement to start from.
 
-// SCollection[(String, String, Int)]
-```
+## Finally... Monitoring
 
-Yuk. Now we need to remember that the first `String` is the userId, the second is the path and the final `Int` is the statusCode.
-It gets worse when we start aggregating, adding more complexity and numbers into the mix.
+The last thing to touch on is the boring operations stuff.
+How will I know if the site goes down or goes slow, particularly as I don't have any servers to alert me?
+My go-to tool for this kind of thing was [Pingdom](https://pingdom.com), but it looks like they've done away with their free tier.
+If I recall correctly, it used to be free to healthcheck two URls. Now you get a 14 day trial.
 
-```scala
-sc.textFile(args("input"))
-  .map(AccessLog.parseLine)
-  .map(x => (x.userId, x.path, x.statusCode))
-  .countByValue
+We can't really complain when previously free services change their terms, but before signing up I checked whether anyone else was doing this basic health checking,
+and I found [UptimeRobot](https://uptimerobot.com). They have a generous free tier, so I signed up there instead and pointed them at the test site.
+It's been checking for three hours now and everything looks good.
+I can also see that the response times are between 150-250ms, which is a useful measure to have historical data on!
 
-// SCollection[((String, String, Int), Long)]
-```
-
-This is a very simple pipeline.
-When you've got something more complex it gets harder to keep track of what these types mean,
-and when you are working with more than one pipeline it's harder still.
-The type system can help more than it is, so let's use it.
-
-## Once More, With Type Alases
-
-OK, so let's back up, and use Scala's `type` keyword to make the type signatures a bit more useful.
-Our parsing function is a convenient place to introduce additional type information to flow through the pipeline.
-
-```scala
-type ClientIp = String
-type UserId = String
-type Path = String
-type StatusCode = Int
-case class Entry(clientIp: ClientIp, userId: UserId, timestamp: Instant, path: Path, statusCode: StatusCode)
-```
-
-That's it.
-Everything still type-checks, as the "real" types haven't changed.
-Our new aliases will now flow through the pipeline code,
-allowing us to see what the types really meant at each point.
-Let's retrace our steps and see how these new types help us out.
-This time, I'll comment the types at each step for brevity.
-
-```scala
-sc.textFile(args("input"))
-  .map(AccessLog.parseLine)
-  // SCollection[AccessLog.Entry]
-  .map(x => (x.userId, x.path, x.statusCode))
-  // SCollection[(UserId, Path, StatusCode)]
-  .countByValue
-  // SCollection[((UserId, Path, StatusCode), Long)]
-```
-
-An IDE like IntelliJ (keyboard shortcut Alt-=, probably something slightly different on a Mac) will tell you what the values you're dealing with as you code.
-The type alias syntax is concise too, much better than having to create classes.
-It's not a lot of extra thinking or typing for a significant increase in the amount of information you have as you're writing
-or debugging a pipeline.
-The custom parse function early in the pipeline provides a neat starting point to inject this type information
-and have it flow through the rest of our pipeline.
-
-Source code for this example can be found at https://github.com/brabster/beam-scala-types-example
+## 
