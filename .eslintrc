@@ -20,6 +20,7 @@
         "object-curly-newline": ["error", { "multiline": true, "minProperties": 5 }],
         "arrow-body-style": ["error", "as-needed", { "requireReturnForObjectLiteral": true }],
         "import/extensions": [0],
+        "import/prefer-default-export": "off",
         "no-console": "off"
     }
 }
