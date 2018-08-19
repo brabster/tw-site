@@ -1,9 +1,9 @@
 ---
-title: "Setting up this site with GatsbyJS"
+title: "Setting up this site with GatsbyJS and Netlify"
 date: "2018-08-19T11:24:25Z"
 layout: post
 draft: false
-path: "/posts/setting-up-tempered-dot-works-with-gatsbyjs"
+path: "/posts/setting-up-tempered-dot-works-with-gatsbyjs-and-netlify"
 category: "Web Development"
 tags:
  - "gatsbyjs"
@@ -11,8 +11,10 @@ tags:
  - "blogging"
  - "web-development"
  - "static-sites"
-description: "GatsbyJS is a GraphQL and React-based static site generator that aims to produce really fast sites. Here's what happened when I used it to set up the tempered.works website."
+description: "GatsbyJS is a GraphQL and React-based static site generator that aims to produce really fast sites. Here's what happened when I used it to set up the tempered.works website on Netlify."
 ---
+
+![No better time to grab an old Geocities-style under construction gif...](https://media.giphy.com/media/JIejyxfnKRVv2/giphy.gif)
 
 Every company needs a website, and Tempered Works is no exception!
 Having bought the domain names when I set the company up, I've been putting off getting a website up and running because I'm not really a front-end creative type.
@@ -34,6 +36,11 @@ Gatsby provides loads of "[starters](https://www.gatsbyjs.org/docs/gatsby-starte
 A quick look down the list and I settled for [gatsby-starter-lumen](https://github.com/alxshelepenok/gatsby-starter-lumen).
 I felt it had a clean, professional look, and it seemed really quick on page loads.
 A quick `gatsby new my-blog https://github.com/alxshelepenok/gatsby-starter-lumen` later, and I had a basic project.
+
+I'm not sure whether I'll stick with the theme.
+Aside from the clean styling, it's the blog aspect and markdown support for posts that I like.
+After adding a couple of links and a company footer to the sidebar, the mobile view is mostly links and footer!
+Hopefully it wouldn't be too difficult to switch.
 
 ## Where does GraphQL fit?
 
@@ -83,6 +90,8 @@ To keep things tidy, there's [gatsby-plugin-netlify](https://www.gatsbyjs.org/pa
 I started by adding the headers that Observatory recommended, to get an A+ rating.
 Then I relaxed the rules until the site worked again!
 
+![Mozilla's Observatory, showing the summary for the website](observatory.png)
+
 I like that approach, particularly when I'm using an open source project like Gatsby and the Lumen theme,
 because you essentially get a guided tour of what the site is doing that has security implications.
 It took  about 10 commits before I was happy-ish with the headers and the site was working without any errors in the JavaScript console.
@@ -95,7 +104,9 @@ A similar approach to benchmark performance, using Google's [Page Speed](https:/
 Right now, we're getting 51% on the mobile optimisation benchmark, and 89% on the desktop benchmark.
 Whilst the site feels very snappy to me, there's probably work to do there, but at least I have a measurement to start from.
 
-## Finally... Monitoring
+![Google's Page Speed tool, showing the poor mobile performance for the website](pagespeed-poor.png)
+
+## Monitoring
 
 The last thing to touch on is the boring operations stuff.
 How will I know if the site goes down or goes slow, particularly as I don't have any servers to alert me?
@@ -107,4 +118,24 @@ and I found [UptimeRobot](https://uptimerobot.com). They have a generous free ti
 It's been checking for three hours now and everything looks good.
 I can also see that the response times are between 150-250ms, which is a useful measure to have historical data on!
 
-## 
+![Uptime Robot's dashboard for availability and latency history, showing 100% availability and latency between 150-250ms](uptimerobot.png)
+
+## Finally... DNS and TLS Setup
+
+The last thing to do is migrate the DNS records over to Netlify, so that https://tempered.works points to the Netlify site!
+I bought the domain though [Hover](https://www.hover.com) after recommendations by [Steve Gibson](https://twitter.com/sggrc) on the [Security Now!](https://twit.tv/shows/security-now) podcast.
+Hover is fine, but they don't support CNAME flattening, ANAME or ALIAS records that are required by Netlify to get the full benefits of an apex domain.
+`tempered.works` is an apex domain, `www.tempered.works` would be a non-apex alternative. I want `tempered.works` to be my domain!.
+I could move my DNS to Netlify but I'm trying just pointing A records to Netlify's load balancer for now.
+You may want to choose a DNS provider that supports those newer record types if you intend to host on cloud services!
+
+Of course, now I'm using my own domain name I need a TLS certificate that matches.
+Netlify's got me covered - it automatically provisioned me a free [Let's Encrypt!](https://letsencrypt.org/) certificate for my domain.
+It took over half an hour, but that's no problem.
+Once the certificate was provisioned, I got the option of forcing connections to `https://`, so I turned it on.
+
+That's it - tempered.works is online!
+
+## Credits
+
+- Under construction gif courtesy of https://giphy.com/stickers/please-construction-patient-JIejyxfnKRVv2
