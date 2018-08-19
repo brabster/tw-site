@@ -160,7 +160,7 @@ module.exports = {
             'X-Frame-Options: DENY',
             'X-XSS-Protection: 1; mode=block',
             'X-Content-Type-Options: nosniff',
-            'Content-Security-Policy: default-src \'self\' unsafe-inline fonts.googleapis.com',
+            "Content-Security-Policy: default-src 'self'; script-src 'self' unsafe-inline'; font-src https://fonts.googleapis.com;",
             'Referrer-Policy: no-referrer-when-downgrade'
           ]
         }
