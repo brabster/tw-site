@@ -33,7 +33,6 @@ class Sidebar extends React.Component {
             <Link className="sidebar__author-title-link" to="/">{author.name}</Link>
           </h2>
         }
-        <p className="sidebar__author-affiliation">{author.affiliation}</p>
         <p className="sidebar__author-subtitle">{subtitle}</p>
       </div>
     );

@@ -12,14 +12,14 @@ module.exports = {
   siteMetadata: {
     url: 'https://tempered.works',
     title: 'Tempered Works Ltd. Software Consulting',
-    subtitle: 'Consultancy, contracting and coaching in software development and data engineering',
+    subtitle: 'Consultancy, contracting and coaching for software development and data engineering. Based in Sheffield, UK.',
     companyInfo: 'Tempered Works Ltd. is registered in England with company number 11372276, VAT number 296417076.',
     companyAddress: 'First Floor, Telecom House, 125-135 Preston Road, Brighton BN1 6AF',
     copyright: '© All rights reserved.',
     disqusShortname: '',
     menu: [
       {
-        label: 'About Me',
+        label: 'About Tempered Works',
         path: '/about'
       },
       {
