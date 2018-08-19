@@ -43,24 +43,7 @@ export default TagsRoute;
 export const pageQuery = graphql`
   query TagsQuery {
     site {
-      siteMetadata {
-        title
-        subtitle
-        copyright
-        menu {
-          label
-          path
-        }
-        author {
-          name
-          email
-          twitter
-          github
-          linkedin
-          stackoverflow
-          rss
-        }
-      }
+      ...SiteMetadata
     }
     allMarkdownRemark(
       limit: 2000

@@ -32,10 +32,18 @@
             @include line-height(1);
             @include margin-bottom(1);
         }
+        &-affiliation {
+            @include line-height(1);
+            @include margin-bottom(1);
+        }
     }
     &__copyright {
         color: lighten($color-gray, 18%);
         font-size: $typographic-small-font-size;
+    }
+    &__company {
+        color: lighten($color-gray, 18%);
+        font-size: $typographic-xsmall-font-size;
     }
 }
 

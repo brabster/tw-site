@@ -4,6 +4,8 @@ export const fragmentAuthor = graphql`
       title
       subtitle
       copyright
+      companyInfo
+      companyAddress
       url
       menu {
         label
@@ -11,6 +13,7 @@ export const fragmentAuthor = graphql`
       }
       author {
         name
+        affiliation
         email
         twitter
         github

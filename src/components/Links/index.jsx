@@ -8,6 +8,10 @@ class Links extends React.Component {
 
     return (
       <div className="links">
+        <h4>Contact</h4>
+        <a href={`mailto:${author.email}`}>
+          {`${author.email}`}
+        </a>
         <ul className="links__list">
           <li className="links__list-item">
             <a href={`https://twitter.com/${author.twitter}`} target="_blank" >
@@ -27,11 +31,6 @@ class Links extends React.Component {
           <li className="links__list-item">
             <a href={`https://stackoverflow.com/users//${author.stackoverflow}`} target="_blank" >
               <i className="icon-stackoverflow" />
-            </a>
-          </li>
-          <li className="links__list-item">
-            <a href={`mailto:${author.email}`}>
-              <i className="icon-mail" />
             </a>
           </li>
         </ul>
