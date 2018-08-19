@@ -94,6 +94,10 @@ Then I relaxed the rules until the site worked again!
 
 I like that approach, particularly when I'm using an open source project like Gatsby and the Lumen theme,
 because you essentially get a guided tour of what the site is doing that has security implications.
+I also caught a mistake because of these headers.
+I'd left a [Giphy](https://giphy.com) link to an image instead of using the site's local copy.
+The CSP headers disallowed it because they only allow images to be served from 'self' and Google Analytics.
+
 It took  about 10 commits before I was happy-ish with the headers and the site was working without any errors in the JavaScript console.
 The site gets a B+ right now, with the remaining issues being slightly-too-lax Content Security Policy specifications.
 It looks like the Gatsby team is [working on dealing with those remaining issues](https://github.com/gatsbyjs/gatsby/issues/3758).
@@ -133,6 +137,7 @@ Of course, now I'm using my own domain name I need a TLS certificate that matche
 Netlify's got me covered - it automatically provisioned me a free [Let's Encrypt!](https://letsencrypt.org/) certificate for my domain.
 It took over half an hour, but that's no problem.
 Once the certificate was provisioned, I got the option of forcing connections to `https://`, so I turned it on.
+Why would you want to access this site over plaintext anyway?
 
 That's it - tempered.works is online!
 
