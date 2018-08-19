@@ -14,7 +14,7 @@ tags:
 description: "GatsbyJS is a GraphQL and React-based static site generator that aims to produce really fast sites. Here's what happened when I used it to set up the tempered.works website on Netlify."
 ---
 
-![No better time to grab an old Geocities-style under construction gif...](https://media.giphy.com/media/JIejyxfnKRVv2/giphy.gif)
+![No better time to grab an old Geocities-style under construction gif...](under-construction.gif)
 
 Every company needs a website, and Tempered Works is no exception!
 Having bought the domain names when I set the company up, I've been putting off getting a website up and running because I'm not really a front-end creative type.
