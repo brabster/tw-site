@@ -157,7 +157,9 @@ module.exports = {
       options: {
         headers: {
           '/*': [
-            'X-Frame-Options: DENY'
+            'X-Frame-Options: DENY',
+            'X-XSS-Protection: 1; mode=block',
+            'X-Content-Type-Options: nosniff'
           ]
         }
       }
