@@ -40,7 +40,8 @@ A quick `gatsby new my-blog https://github.com/alxshelepenok/gatsby-starter-lume
 I'm not sure whether I'll stick with the theme.
 Aside from the clean styling, it's the blog aspect and markdown support for posts that I like.
 After adding a couple of links and a company footer to the sidebar, the mobile view is mostly links and footer!
-Hopefully it wouldn't be too difficult to switch.
+It also feels unnecessarily narrow on my laptop, so code snippets are particular hard to use without scrollbars.
+We'll see, hopefully it wouldn't be too difficult to switch if I decided to.
 
 ## Where does GraphQL fit?
 
@@ -101,6 +102,39 @@ The CSP headers disallowed it because they only allow images to be served from '
 It took  about 10 commits before I was happy-ish with the headers and the site was working without any errors in the JavaScript console.
 The site gets a B+ right now, with the remaining issues being slightly-too-lax Content Security Policy specifications.
 It looks like the Gatsby team is [working on dealing with those remaining issues](https://github.com/gatsbyjs/gatsby/issues/3758).
+
+The CSP headers I ended up with were quite verbose, and Gatsby's config file is JS, so I added a bit of code to make things a little more maintainable.
+
+```javascript
+const cspDirectives = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline' https://www.google-analytics.com",
+  "font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com",
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+  "img-src 'self' https://www.google-analytics.com"
+];
+
+const directivesToCspHeader = headers => headers.join(';');
+```
+
+I can now use these in the config like this:
+
+```javascript
+{
+  resolve: 'gatsby-plugin-netlify',
+  options: {
+    headers: {
+      '/*': [
+        'X-Frame-Options: DENY',
+        'X-XSS-Protection: 1; mode=block',
+        'X-Content-Type-Options: nosniff',
+        `Content-Security-Policy: ${directivesToCspHeader(cspDirectives)}`,
+        'Referrer-Policy: no-referrer-when-downgrade'
+      ]
+    }
+  }
+}
+```
 
 ## What about Performance?
 
