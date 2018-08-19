@@ -59,7 +59,7 @@ These pieces of data are then rendered in the [Links](https://github.com/alxshel
 component, which is used in the Sidebar component, which is itself used in almost every page.
 
 So - to add these links, I need to:
-- add the details for my new social links to `gatsyby-config.js`,
+- add the details for my new social links to `gatsby-config.js`,
 - update the queries to fetch those new links,
 - update the `Links` component to render the new links.
 
@@ -87,11 +87,9 @@ I used [Mozilla's Observatory](https://observatory.mozilla.org) to scan the site
 Could be worse, I guess, but that's not good enough!
 
 It's possible to influence the headers that Netlify serves.
-To keep things tidy, there's [gatsby-plugin-netlify](https://www.gatsbyjs.org/packages/gatsby-plugin-netlify/) a Gatsby plugin that can make the header configuration part of your Gatsby configuration.
+To keep things tidy, there's [gatsby-plugin-netlify](https://www.gatsbyjs.org/packages/gatsby-plugin-netlify/), a Gatsby plugin that can make the header configuration part of your Gatsby configuration.
 I started by adding the headers that Observatory recommended, to get an A+ rating.
 Then I relaxed the rules until the site worked again!
-
-![Mozilla's Observatory, showing the summary for the website](observatory.png)
 
 I like that approach, particularly when I'm using an open source project like Gatsby and the Lumen theme,
 because you essentially get a guided tour of what the site is doing that has security implications.
@@ -100,7 +98,7 @@ I'd left a [Giphy](https://giphy.com) link to an image instead of using the site
 The CSP headers disallowed it because they only allow images to be served from 'self' and Google Analytics.
 
 It took  about 10 commits before I was happy-ish with the headers and the site was working without any errors in the JavaScript console.
-The site gets a B+ right now, with the remaining issues being slightly-too-lax Content Security Policy specifications.
+The site gets a B+ right now, with the remaining issues being Content Security Policy specifications that are a little more lenient than we'd ideally like.
 It looks like the Gatsby team is [working on dealing with those remaining issues](https://github.com/gatsbyjs/gatsby/issues/3758).
 
 The CSP headers I ended up with were quite verbose, and Gatsby's config file is JS, so I added a bit of code to make things a little more maintainable.
@@ -136,13 +134,18 @@ I can now use these in the config like this:
 }
 ```
 
+Here's the observatory's advice on those headers.
+
+![Mozilla's Observatory, showing the summary for the website](observatory.png)
+
+
 ## What about Performance?
 
 A similar approach to benchmark performance, using Google's [Page Speed](https://developers.google.com/speed/pagespeed/insights/) tool.
-Right now, we're getting 51% on the mobile optimisation benchmark, and 89% on the desktop benchmark.
-Whilst the site feels very snappy to me, there's probably work to do there, but at least I have a measurement to start from.
+Right now, we're getting 71% on the mobile optimisation benchmark, and 90% on the desktop benchmark.
+Whilst the site feels very snappy to me, there's probably work to do there when I have time, but at least I have a measurement to start from.
 
-![Google's Page Speed tool, showing the poor mobile performance for the website](pagespeed-poor.png)
+![Google's Page Speed tool, showing the poor mobile performance for the website](pagespeed.png)
 
 ## Monitoring
 
