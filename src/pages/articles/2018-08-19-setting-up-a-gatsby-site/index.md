@@ -36,6 +36,7 @@ Gatsby provides loads of "[starters](https://www.gatsbyjs.org/docs/gatsby-starte
 A quick look down the list and I settled for [gatsby-starter-lumen](https://github.com/alxshelepenok/gatsby-starter-lumen).
 I felt it had a clean, professional look, and it seemed really quick on page loads.
 A quick `gatsby new my-blog https://github.com/alxshelepenok/gatsby-starter-lumen` later, and I had a basic project.
+If you're trying it out for yourself, check out the [Gatsby docs](https://www.gatsbyjs.org/docs/) to fill in the details I leave out.
 
 I'm not sure whether I'll stick with the theme.
 Aside from the clean styling, it's the blog aspect and markdown support for posts that I like.
