@@ -93,7 +93,7 @@ When you've got something more complex it gets harder to keep track of what thes
 and when you are working with more than one pipeline it's harder still.
 The type system can help more than it is, so let's use it.
 
-## Once More, With Type Alases
+## Once More, With Type Aliases
 
 OK, so let's back up, and use Scala's `type` keyword to make the type signatures a bit more useful.
 Our parsing function is a convenient place to introduce additional type information to flow through the pipeline.
