@@ -4,6 +4,7 @@ import Link from 'gatsby-link';
 import Menu from '../Menu';
 import Links from '../Links';
 import profilePic from '../../pages/profile.jpeg';
+import CompanyTile from '../CompanyTile'
 import './style.scss';
 
 class Sidebar extends React.Component {
@@ -41,19 +42,10 @@ class Sidebar extends React.Component {
     return (
       <div className="sidebar">
         <div className="sidebar__inner">
-          <div className="sidebar__author">
-            {authorBlock}
-          </div>
+          <CompanyTile />
           <div>
             <Menu data={menu} />
             <Links data={author} />
-            <p className="sidebar__copyright">
-              {copyright}
-            </p>
-            <div className="sidebar__company">
-              <div>{companyInfo}</div>
-              <div>Registered address: {companyAddress}</div>
-            </div>
           </div>
         </div>
       </div>

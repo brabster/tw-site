@@ -20,16 +20,16 @@ module.exports = {
     disqusShortname: '',
     menu: [
       {
+        label: 'Services',
+        path: '/services'
+      },
+      {
         label: 'Blog',
         path: '/'
       },
       {
         label: 'Publications',
         path: '/publications'
-      },
-      {
-        label: 'About Tempered Works',
-        path: '/about'
       }
     ],
     author: {

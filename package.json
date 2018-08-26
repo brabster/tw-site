@@ -45,13 +45,13 @@
     "gatsby-transformer-remark": "^1.7.44",
     "gatsby-transformer-sharp": "^1.6.27",
     "lodash": "^4.17.10",
-    "prismjs": "^1.15.0",
+    "prismjs": "^9000.0.1",
     "react": "^16.4.2",
     "react-disqus-comments": "^1.2.0",
     "react-helmet": "^5.2.0"
   },
   "devDependencies": {
-    "eslint": "^5.3.0",
+    "eslint": "^5.4.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jsx-a11y": "^6.1.1",

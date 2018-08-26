@@ -99,8 +99,7 @@ exports.onCreateNode = ({ node, boundActionCreators, getNode }) => {
     const slug = `/${parsedFilePath.dir.split('---')[1]}/`;
     createNodeField({ node, name: 'slug', value: slug });
   } else if (
-    node.internal.type === 'MarkdownRemark' &&
-    typeof node.slug === 'undefined'
+    node.internal.type === 'MarkdownRemark' && typeof node.slug === 'undefined'
   ) {
     const fileNode = getNode(node.parent);
     let slug = fileNode.fields.slug;
