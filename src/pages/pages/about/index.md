@@ -4,8 +4,9 @@ layout: page
 path: "/services"
 ---
 
-Having worked with analytics, marketing, machine learning, as well as my core of software development,
-I’m flexible enough to help you.
+Alongside software development and data engineering,
+I've worked in analytics, marketing, machine learning and cloud computing.
+I love solving problems and I’m flexible enough to help you.
 
 I perform contract, consulting or freelance engagements that help you and challenge me.
 My experience extends to leading teams, technical architecture and product development.
