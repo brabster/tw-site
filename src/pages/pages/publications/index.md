@@ -4,6 +4,8 @@ layout: page
 path: "/publications"
 ---
 
+A selection of papers, articles, talks and workshop materials that I've produced.
+
 * [Introduction to Feature Selection](https://www.kaggle.com/paulbrabban/intro-to-feature-selection) - Machine Learning Workshop - March 2018
 * [k-Nearest Neighbour Workshop](https://github.com/defshef/dojo-knn) - Machine Learning Workshop - Feb 2018
 * [Sky Betting and Gaming Tech Blog](https://engineering.skybettingandgaming.com/authors/#paul_brabban) - Blog Posts - July 2017
