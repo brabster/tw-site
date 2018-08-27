@@ -10,7 +10,7 @@ class CompanyTile extends React.Component {
           Tempered Works
         </div>
         <div className="company__strapline">
-          Software and Data Engineering
+          Consulting in Software and Data Engineering
         </div>
       </div>
     );

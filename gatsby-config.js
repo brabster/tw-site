@@ -13,7 +13,7 @@ module.exports = {
   siteMetadata: {
     url: 'https://tempered.works',
     title: 'Tempered Works Ltd. Software Consulting',
-    subtitle: '',
+    subtitle: 'Consulting in software development and data engineering',
     companyInfo: '',
     companyAddress: '',
     copyright: '© All rights reserved.',
