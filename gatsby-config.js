@@ -20,12 +20,12 @@ module.exports = {
     disqusShortname: '',
     menu: [
       {
-        label: 'Services',
-        path: '/services'
-      },
-      {
         label: 'Blog',
         path: '/'
+      },
+      {
+        label: 'Services',
+        path: '/services'
       },
       {
         label: 'Publications',

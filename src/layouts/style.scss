@@ -1,9 +1,11 @@
 .site {
   display: flex;
+  align-items: center;
   min-height: 100vh;
   flex-direction: column;
 
   &__content {
+    max-width: 80em;
     flex: 1;
   }
 }
