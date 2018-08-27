@@ -1,0 +1,12 @@
+.site {
+  display: flex;
+  align-items: center;
+  min-height: 100vh;
+  flex-direction: column;
+
+  &__content {
+    width: 100%;
+    max-width: 80em;
+    flex: 1;
+  }
+}

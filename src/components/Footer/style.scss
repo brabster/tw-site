@@ -1,0 +1,12 @@
+@import "../../assets/scss/variables";
+@import "../../assets/scss/mixins";
+
+.footer {
+  background-color: #efefef;
+  text-align: center;
+  padding: 0.25rem;
+  &__company {
+    color: $color-gray;
+    font-size: $typographic-xsmall-font-size;
+  }
+}
