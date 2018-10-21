@@ -23,4 +23,9 @@ The more recent article is original and talks about the experiences we've had pu
 If you're interested, you can find that article at
 [Building Live Streaming Demos](https://medium.com/dunnhumby-data-science-engineering/building-live-streaming-demos-ece9515efc4d)
 
+It was also an opportunity to try [medium.com](https://medium.com) out as a technical author.
+I found the difficulty in inserting code snippets (you embed Codepen or Github snippets, but it's a bit inconvenient compared to just writing the code)
+and the lack of version control to be the main downsides.
+The polish and support for writing for a third-party publication were upsides.
+
 Thanks to Dunnhumby for the opportunity to write on their blog!
