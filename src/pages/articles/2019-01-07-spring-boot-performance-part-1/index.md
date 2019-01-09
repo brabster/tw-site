@@ -137,23 +137,27 @@ setUp(myScenario.inject(
     .assertions(global.successfulRequests.percent.is(100))
 ```
 
-We're starting with 20 users per second making a request to the `/` resource, holding at that concurrency for five seconds. Then we increase the number of users per second by twenty, five times, holding for five seconds each time. Simple!
+We're starting with 20 users per second making a request to the `/` resource, holding at that concurrency for five seconds. They only make one request. Then we increase the number of users per second by twenty, five times, holding for five seconds each time. Simple! You'll find the test in [LoadTest.scala](https://github.com/brabster/performance-with-spring-boot/blob/1.0/src/test/scala/hello/LoadTest.scala).
 
 Make sure the app is running and then run the test with `mvn gatling:test`.
 
 ![](perf-test-1.gif)
 
-When the tests run you see a progress bar being refreshed every few seconds. The `###` part represents the proportion of requests that have been made and completed. The section with dashes `---` is requests made but not yet completed. The numbers are just below the progress bar, `active` telling us how many requests have been made but not yet completed. There's a lot of those, over a thousand towards the end of the test, and this computer isn't exactly underpowered. There's our performance problem!
+When the tests run you see a progress bar being refreshed every few seconds. The `###` part represents the proportion of requests that have been made and completed. The section with dashes `---` is requests made but not yet completed. The numbers are just below the progress bar, `active` telling us how many requests have been made but not yet completed. There's a lot of those, over a thousand towards the end of the test, and this computer isn't exactly underpowered. There's our performance problem! Towards the end of the test, requests are taking over 26 seconds to complete.
 
 If you cloned the project, you can try changing the scenario in [LoadTest.scala](https://github.com/brabster/performance-with-spring-boot/blob/1.0/src/test/scala/hello/LoadTest.scala) to explore the problem. Running something like `top` will show you your live CPU utilisation. I can see the app using almost a full 4 cores while the test is running.
 
 ## Gatling's Reports
 
-Gatling saves a report for each test. The response time distribution report tells us that the fastest few requests are served in around 200ms, and then there's an even distribution of request times up to 30 seconds. The test only ran for around 70 seconds in total.
+Gatling saves a report for each test. The "Response Time Distribution" report tells us that the fastest few requests are served in around 200ms, and then there's an even distribution of request times up to 30 seconds. The test only ran for around 70 seconds in total.
 
-![Charts for response time distribution, percentiles and so forth](gatling-slow-response-time-distribution.png)
+![Bar chart showing 15 requests responded in around 200 milliseconds, with other requests uniformly distributed up to almost 30 seconds](gatling-slow-response-time-distribution.png)
 
-That's pretty healthy. All the requests were served up quickly, with the 99th percentile at 8ms (that is, 99% of requests were completed in 8ms or less).
+The "Number of reuqests per second" chart shows more clearly that the app isn't keeping up, even with these low request rates. The number of active users (those that have made a requests and not yet had a response) climbs until Gatling stops sending new requests.
+
+![Bar chart showing 15 requests responded in around 200 milliseconds, with other requests uniformly distributed up to almost 30 seconds](gatling-slow-request-response-rate.png)
+
+Gatling's reports show you plenty of other interesting charts and figures. Find them in your `target` directory after running a test.
 
 ## Next Time
 
