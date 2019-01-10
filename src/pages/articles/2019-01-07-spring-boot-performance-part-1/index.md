@@ -1,5 +1,5 @@
 ---
-title: "A Spring Boot Performance Problem"
+title: "Exploring performance with Spring Boot and Gatling"
 date: "2019-01-07T19:58:00.000Z"
 layout: post
 draft: false
@@ -13,7 +13,7 @@ tags:
  - "gatling"
  - "java"
  - "scala"
-description: "The surprisingly poor performance of a basic Spring Boot webapp. Part 1 of a series."
+description: "Exploring a surprising performance problem in a simple Spring Boot app with the Gatling load testing framework."
 ---
 
 Just after the rest of the team had left for their Christmas holidays, my colleague and I discovered a weird performance problem with a Spring Boot application we'd just started writing.
@@ -33,11 +33,11 @@ I've not used this graph database before, can it really be that slow? Nor have I
 
 There's too many potential culprits here, so let's eliminate some. Can I reproduce the problem here on my machine? Yes - and I get a clue. As the test runs, I can hear the fan spinning up. Checking back on AWS for server metrics, the CPU utilisation was shooting up to 100% during the test. That removes Kubernetes, the load balancer, the network and disks from the investigation, at least for now. Memory could still be a problem, as Java's garbage collection chews up compute time when there's not enough memory.
 
-Now we eliminate the database. We'd written a resource to return version information, which is just returning a document from memory. Running the performance test on that endpoint revealed the same terrible performance! Something to do with Spring then - where can we go from here?
+Now we eliminate the database. We'd written a resource to return version information, which is just returning a document from memory. Running the performance test on that endpoint revealed the same terrible performance! Something to do with the Spring framework, or the Tomcat application server then - where can we go from here?
 
 We *could* pull out profiler tooling to look inside the running app and see what's going on. It's been a while since I used that tooling on the JVM, and it'll produce a lot information to interpret, so I'll leave that as a backup plan. For now, we've got an easy option that will rule out the Spring Boot framework and Tomcat application server. A "getting started" Spring Boot app won't take long to set up. We can eliminate JSON processing, configuration problems and coding errors as potential candidates, and get a benchmark for how performant the simplest Spring Boot app is with our hardware and test setup.
 
-This is where we join the story.
+This is where we write some code.
 
 ## The "Getting Started" App
 
@@ -137,7 +137,7 @@ setUp(myScenario.inject(
     .assertions(global.successfulRequests.percent.is(100))
 ```
 
-We're starting with 20 users per second making a request to the `/` resource, holding at that concurrency for five seconds. They only make one request. Then we increase the number of users per second by twenty, five times, holding for five seconds each time. Every requests must return an HTTP 200 status code to pass the test. Simple! You'll find the rest of the test in [LoadTest.scala](https://github.com/brabster/performance-with-spring-boot/blob/1.0/src/test/scala/hello/LoadTest.scala).
+We're starting with 20 users per second making a request to the `/` resource, holding at that concurrency for five seconds. They only make one request. Then we increase the number of users per second by twenty, five times, holding for five seconds each time. Every request must return an HTTP 200 status code to pass the test. Simple! You'll find the rest of the test in [LoadTest.scala](https://github.com/brabster/performance-with-spring-boot/blob/1.0/src/test/scala/hello/LoadTest.scala).
 
 Make sure the app is running and then run the test with `mvn gatling:test`.
 
@@ -155,11 +155,11 @@ Gatling saves a report of metrics and charts for each test. There's a couple tha
 
 The "Response Time Distribution" report tells us that the fastest few requests are served in around 200ms. So it takes at least 200ms to serve a request! Then there's an roughly uniform distribution of request times up to 30 seconds. The test only ran for around 70 seconds in total.
 
-The "Number of requests per second" chart shows more clearly that the app isn't keeping up, even with these low request rates. The number of active users (those that have made a requests and not yet had a response) climbs until Gatling stops sending new requests.
+Next, the "Number of requests per second" chart shows more clearly that the app isn't keeping up, even with these low request rates. The number of active users (those that have made a request and not yet had a response) climbs until Gatling stops sending new requests.
 
 ![Line chart showing the number of new requests per second and the number of active requests over time.](gatling-slow-request-response-rate.png)
 
-You can see the app is not quite able to keep up at 40 requests per second. as we ramp to 60 the line swings upwards as it really starts to fall behind. 45 seconds or so into the test the number of requests drops from 100 to zero, and the number of active requests stops climbing as the app starts to clear its backlog.
+You can see the app is not quite able to keep up at 40 requests per second. as we ramp to 60 the line swings upwards as it really starts to fall behind. 45 seconds or so into the test the number of requests per second drops from 100 to zero, and the number of active requests, just over 1000 by this point, stops climbing and starts to fall as the app starts to clear its backlog.
 
 Gatling's reports show you plenty of other interesting charts and figures. Find them in your `target` directory after running a test.
 
