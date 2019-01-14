@@ -52,7 +52,7 @@ This is where we write some code.
 
 You can find and clone the project we're talking about in this post on Github at https://github.com/brabster/performance-with-spring-boot/tree/1.0. You'll need a JDK and Maven installed to compile and run the application.
 
-I based the "getting started" app closely on [Spring Boot's documentation](https://spring.io/guides/gs/spring-boot/). It's got one endpoint at `/` and returns a JSON document `{"greeting": "Greetings from Spring Boot!"}` like this:
+I based the "getting started" app closely on [Spring Boot's documentation](https://spring.io/guides/gs/spring-boot/). It's got one endpoint at `/` and returns a JSON document `{"greeting": "Greetings from Spring Boot!"}` like [this](https://github.com/brabster/performance-with-spring-boot/blob/1.0/src/main/java/hello/HelloController.java):
 
 ```java
 package hello;
@@ -101,13 +101,13 @@ spring.security.user.password=24gh39ugh0
 
 Start the app with `mvn spring-boot:run` and you should see something like this:
 
-![](start-app.gif)
+![Asciinema recording of the app starting](start-app.gif)
 
 ## Performance Testing with Gatling
 
 [Gatling](https://gatling.io/) is the tooling that gave us those original requests per second figures, so let's reproduce the setup to do our performance tests here. Gatling tests are written in Scala and can coexist with the Java code, but we need a little support in our project to run tests and get editor support for Scala.
 
-To compile Scala code, and enable Scala support (at least in IntelliJ IDEA) I used the rather neat [scala-maven-plugin](https://davidb.github.io/scala-maven-plugin/index.html):
+To compile Scala code and enable Scala support (at least in [IntelliJ IDEA](https://www.jetbrains.com/idea/)) I used the rather neat [scala-maven-plugin](https://davidb.github.io/scala-maven-plugin/index.html):
 
 ```xml
 <plugin>
@@ -161,7 +161,7 @@ We're starting with 20 users per second making a request to the `/` resource, ho
 
 Make sure the app is running and then run the test with `mvn gatling:test`.
 
-![](perf-test-1.gif)
+![Asciinema recording of the performance test running](perf-test-1.gif)
 
 When the tests run you see a progress bar being refreshed every few seconds. The `###` part represents the proportion of requests that have been made and completed. The section with dashes `---` is requests made but not yet completed. The numbers are just below the progress bar, `active` telling us how many requests have been made but not yet completed. There's a lot of those, over a thousand towards the end of the test, and this computer isn't exactly underpowered. There's our performance problem! Towards the end of the test, requests are taking over 26 seconds to complete.
 
