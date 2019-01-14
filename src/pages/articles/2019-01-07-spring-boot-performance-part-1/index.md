@@ -52,21 +52,32 @@ This is where we write some code.
 
 You can find and clone the project we're talking about in this post on Github at https://github.com/brabster/performance-with-spring-boot/tree/1.0. You'll need a JDK and Maven installed to compile and run the application.
 
-I based the "getting started" app closely on [Spring Boot's documentation](https://spring.io/guides/gs/spring-boot/). It's got one endpoint at `/` and returns the plain string "Greetings from Spring Boot!" like this:
+I based the "getting started" app closely on [Spring Boot's documentation](https://spring.io/guides/gs/spring-boot/). It's got one endpoint at `/` and returns a JSON document `{"greeting": "Greetings from Spring Boot!"}` like this:
 
 ```java
+package hello;
+
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+
 @RestController
 public class HelloController {
 
+    class Greeting {
+        public String getGreeting() {
+            return "Greetings from Spring Boot!";
+        }
+    }
+
     @RequestMapping("/")
-    public String index() {
-        return "Greetings from Spring Boot!";
+    public Greeting index() {
+        return new Greeting();
     }
 
 }
 ```
 
-We'll use Spring Security to authenticate users and API clients, so we need to add the dependencies and set a default username and password. The dependencies we need to add to our Maven [pom.xml](https://github.com/brabster/performance-with-spring-boot/blob/1.0/pom.xml) file are:
+We'll use Spring Security to authenticate API clients, so we need to add the dependencies and set a default username and password. The dependencies we need to add to our Maven [pom.xml](https://github.com/brabster/performance-with-spring-boot/blob/1.0/pom.xml) file are:
 
 ```xml
 <dependency>
