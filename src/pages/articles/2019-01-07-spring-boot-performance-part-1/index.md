@@ -26,10 +26,19 @@ Twenty requests per second.
 Any more than that and response times would climb.
 Eventually, the load balancer's readiness checks would timeout and it'd refuse to send traffic to the app, taking the service offline.
 
-We're building an API, rather than a website. Clients authenticate with HTTP basic, passing a username and password in the request. Each request is a query. The app makes a few queries to a graph database and calculates an answer, returning it as a JSON document.
+Here's what our little prototype system looked like:
+
+![Diagram showing the components parts of the prototype when we discovered the performance problem](orig-arch-diag.jpg)
+
+We're building an API, rather than a website. 
+Clients authenticate by passing a username and password in the request.
+Each request is a query, and the app talks to a graph database to calculate an answer, returning it as a JSON document.
 It's running in a Kubernetes cluster on AWS, behind an Elastic Load Balancer.
+
 How can it be struggling to serve more than twenty requests per second?
 I've not used this graph database before, can it really be that slow? Nor have I used Kubernetes or Spring Boot, are they responsible? You wouldn't think there'd be enough of our code yet to perform so poorly, but our own code is always the go-to suspect.
+
+## Too Many Suspects
 
 There's too many potential culprits here, so let's eliminate some. Can I reproduce the problem here on my machine? Yes - and I get a clue. As the test runs, I can hear the fan spinning up. Checking back on AWS for server metrics, the CPU utilisation was shooting up to 100% during the test. That removes Kubernetes, the load balancer, the network and disks from the investigation, at least for now. Memory could still be a problem, as Java's garbage collection chews up compute time when there's not enough memory.
 
