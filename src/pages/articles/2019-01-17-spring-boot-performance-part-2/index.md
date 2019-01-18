@@ -1,5 +1,5 @@
 ---
-title: "..."
+title: "On the Trail of Performance"
 date: "2019-01-17T20:00:00.000Z"
 layout: post
 draft: false
@@ -13,7 +13,7 @@ tags:
  - "gatling"
  - "java"
  - "scala"
-description: "..."
+description: "Tracking down the suprising cause of our performance problem"
 ---
 
 In [part 1](/posts/spring-boot-performance-part-1), we build a simple Spring Boot webapp and demonstrated a surprising lack of performance.
@@ -30,9 +30,7 @@ If we were, say, talking to a slow database synchronously then it would seem mor
 As it's easy, we'll see what happens if we increase the number of threads Tomcat can use. We can check the [documentation](https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html) to see that the default thread pool size is 200 threads and how to increase it.
 We can increase that by an order of magnitude to 2000 threads in `application.properties`:
 
-```
-server.tomcat.max-threads=2000
-```
+`server.tomcat.max-threads=2000`
 
 Running our Gatling test shows that this change has adversely affected performance. We see more active users at peak and a funny dip in the actives line as the backlog is cleared. That dip, marked on the chart below, is a few requests timing out.
 
