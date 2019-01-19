@@ -19,14 +19,13 @@ description: "Tracking down the suprising cause of our performance problem"
 In [part 1](/posts/spring-boot-performance-part-1), we built a simple Spring Boot webapp and demonstrated a surprising performance problem.
 A Gatling performance test simulating different numbers of users making a single request showed our webapp unable to keep up with 40 "users" making one request per second on my fairly powerful computer.
 
-We've already eliminate many problems, so we can use a process of elimination to figure out what's causing the problem. Let's start with a classic.
+We've already eliminate many problems, so we can use a process of elimination to figure out what's causing the problem. Let's start with a classic. I shared a link to part 1 and invited people to guess what the problem was. Thread starvation was amongst the responses, so let's take a look.
 
 ## How Many Threads?
 
-Spring Boot apps run in an embedded Tomcat server by default, and the most obvious place for us to look is Tomcat's thread pool.
-I think that's habit and bias on my part, because the evidence we've seen doesn't really support a thread configuration problem.
+Spring Boot apps run in an embedded Tomcat server by default, so this is something we can look into.
 If we were, say, talking to a slow database synchronously then it would seem more likely that we might be running out of threads to service new requests as exising requests keep threads waiting for responses from the database.
-
+ 
 As it's easy, we'll see what happens if we increase the number of threads Tomcat can use. We can check the [documentation](https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html) to see that the default thread pool size is 200 threads and how to increase it.
 We can increase that by an order of magnitude to 2000 threads in `application.properties`:
 
@@ -119,6 +118,9 @@ I'm not sure how you'd figure it out if you didn't know where to start. GIven a 
 
 ### Password Encoding
 
+<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">My guess is password checking using a slow hash causing some sort of thread pool to fill up and incoming requests to queue</p>&mdash; Glen Mailer (@glenathan) <a href="https://twitter.com/glenathan/status/1085149805557489664?ref_src=twsrc%5Etfw">January 15, 2019</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
 We protect passwords for by 'encoding' or 'hashing' them before we store them. When the user authenticates, we encode the password they gave us and compare with our stored hash to see if the password was right.
 
 The choice of encoding algorithm is important in this world of cloud computing, GPUs and hardware acceleration. We need an algoriithm that needs a lot of CPU power to encode. We get a password encoder using the "Bcrypt" algorithm by default, an algorithm that's been designed to withstand modern techniques and compute power. You can read more about Bcrypt and how it helps keep your user database secure in [Auth0's article](https://auth0.com/blog/hashing-in-action-understanding-bcrypt) and Jeff Attwood's post on [Coding Horror](https://blog.codinghorror.com/speed-hashing/).
@@ -126,6 +128,10 @@ The choice of encoding algorithm is important in this world of cloud computing, 
 See the connection yet? The choice of Bcrypt makes sense for protecting the credentials we're entrusted with, but do we do about this terrible performance?
 
 ### Sessions
+
+<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">Sessions are silent killers ;-) I had similar issue few years ago <a href="https://t.co/uIBP4eJJdD">https://t.co/uIBP4eJJdD</a> <a href="https://t.co/0iNEHaM9X9">pic.twitter.com/0iNEHaM9X9</a></p>&mdash; Maciej Walkowiak (@maciejwalkowiak) <a href="https://twitter.com/maciejwalkowiak/status/1085122819246252033?ref_src=twsrc%5Etfw">January 15, 2019</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
 
 By default, the security config responds to our first authentication with a cookie containing a session ID. That is exchanged without any encoding. Sessions come with lots of problems of their own, so we'll leave that one for another day. If we'd been using a browser, or Gatling had been set up to make lots of requests as the same user, we'd have used the session ID and not seen a performance problem.
 
@@ -167,7 +173,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 }
 ```
-When we run our performance test one last time, we see that we have performance and we have authentication.
+When we run our performance test one last time, we see that we have performance and we have authentication. [@glenathan](https://twitter.com/glenathan) takes the prize for correctly guessing the cause!
 
 How fast can it go? WHen I push the request rate higher, I see that this app can actually handle around 2,000 requests per second. I won't bore you with more asciinema or the charts, but you can [play with the updated app yourself](https://github.com/brabster/performance-with-spring-boot/tree/2.0) if you want. 
 
