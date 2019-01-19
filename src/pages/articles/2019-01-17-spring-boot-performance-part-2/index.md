@@ -16,14 +16,14 @@ tags:
 description: "Tracking down the suprising cause of our performance problem"
 ---
 
-In [part 1](/posts/spring-boot-performance-part-1), we build a simple Spring Boot webapp and demonstrated a surprising lack of performance.
-A Gatling performance test simulating different numbers of users making a single request showed our webapp unable to keep up with 40 users per second.
+In [part 1](/posts/spring-boot-performance-part-1), we built a simple Spring Boot webapp and demonstrated a surprising performance problem.
+A Gatling performance test simulating different numbers of users making a single request showed our webapp unable to keep up with 40 "users" making one request per second on my fairly powerful computer.
 
-WHat kind of performance should we be expecting?
+We've already eliminate many problems, so we can use a process of elimination to figure out what's causing the problem. Let's start with a classic.
 
-## Tomcat Settings
+## How Many Threads?
 
-Spring Boot apps run in an embedded Tomcat server by default,  and the most obvious place for me to look was Tomcat's thread pool.
+Spring Boot apps run in an embedded Tomcat server by default, and the most obvious place for us to look is Tomcat's thread pool.
 I think that's habit and bias on my part, because the evidence we've seen doesn't really support a thread configuration problem.
 If we were, say, talking to a slow database synchronously then it would seem more likely that we might be running out of threads to service new requests as exising requests keep threads waiting for responses from the database.
 
@@ -36,13 +36,11 @@ Running our Gatling test shows that this change has adversely affected performan
 
 ![Requests per second and active users](1000-threads-req-sec.png)
 
-That didn't help, so let's put the max thread count back to the default before we try anything else! If you're following along, I recommend using clean, like `mvn clean spring-boot:run` to ensure that nothing is remembered from the previous build. You can lose a lot of time acting on misleading results otherwise!
+That didn't help, so let's put the max thread count back to the default before we try anything else! If you're following along, I recommend using `clean`, as in `mvn clean spring-boot:run` to ensure that nothing is remembered from the previous build. You can lose a lot of time acting on misleading results otherwise!
 
 ## JSON Encoding
 
-Another unlikely candidate is the JSON encoding we're doing on our responses. Out of the box, Spring Boot uses the venerable Jackson library, but you never know, the default settings might be really ineffcient. Again, it's really easy to check so let's find out.
-
-We update the controller so that instead of returning Java object containing a String, it returns just a plain string, so from:
+Another unlikely candidate is the JSON encoding we're doing on our responses. Out of the box, Spring Boot uses the venerable [Jackson](https://github.com/FasterXML/jackson) library, but you never know, the default settings might be really ineffcient. Again, it's really easy to check so let's find out. We update the controller so that instead of returning Java object containing a String, it returns just a plain string, so from:
 
 
 ```java
@@ -70,17 +68,17 @@ If you make that change and run the Gatling test, you see...
 
 *...drum roll...*
 
-No detectable difference from the original results we got in part 1. Not really a surprise.
+No detectable difference from the original results we got in part 1. Not really a surprise, JSON encoding isn't the problem.
 
 ## Spring Security
 
-The next thing we can check easily is whether Spring Security is causing the problem somehow. Like the cases above, we've got well tried and tested software running with Spring Boot's sensible defaults, so it seems unlikely. It does lots of things though, like BASIC authentication and session management, and we're running out of possible causes though so let's give it a try.
+The next thing we can check easily is whether Spring Security is causing the problem somehow. Like the cases above, we've got well tried and tested software running with Spring Boot's sensible defaults, so it yet again seems unlikely. Something's causing the poor performance and Spring Security does lots of things though, like authentication and session management. We're running out of possible causes though so let's give it a try.
 
 The quick and easy way to check whether something that Spring Security is autoconfiguring in is causing the problem is to just omit the dependency. Let's delete `spring-security-web` and `spring-security-config` from our `pom.xml`. We can see there's less happening on startup, but will it handle the load better? Let's run the test.
 
 ![Asciicast with no spring security on the classpath](no-spring-sec.gif)
 
-You can see that the performance is improved. No active requests throughout the test - the app is keeping up easily. The charts tell the same story. Let's compare side by side to get a feel for the difference.
+We have a winner! You can see that the performance is improved. No active requests throughout the test - the app is keeping up easily. The charts tell the same story. Let's compare side by side to get a feel for the difference.
 
 ### Response time distribution, before:
 ![Histogram of response time distributions, with Spring Security](../2019-01-07-spring-boot-performance-part-1/gatling-slow-response-time-distribution.png)
@@ -97,9 +95,7 @@ Instead of a spread of response times all the way up to 30 seconds, we have all 
 ### Requests per Second and Active Users, after:
 ![Plots of requests per second and active users, without Spring Security](no-spring-security-req-sec.png)
 
-To appreciate the difference, note the different scale for Active Users, the y-axis on the right. Before, the number of active users climbed faster than the request rate, indicating that requests would start timing out if the test hadn't ended. After we remove Spring Security, the number of active users is the same as the request rate throughout the test, so the app is keeping up perfectly with the load.
-
-WHen I push the request rate higher, I see that this app can actually handle around 2,000 requests per second.
+To appreciate the difference, note the different scale for Active Users, the y-axis on the right, and the total time the test ran for on the x-axis. Before, the number of active users climbed faster than the request rate, indicating that requests would start timing out if the test hadn't ended. After we remove Spring Security, the number of active users is the same as the request rate throughout the test, so the app is keeping up perfectly with the load.
 
 ## What's causing the problem?
 
@@ -119,19 +115,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 The Gatling test shows that the performance problem is back. Delete the `http.httpBasic()` line and the problem goes away. Something to do with authentication then. I didn't find anything in Spring Security or Spring Boot documentation to explain it.
 
-Fortunately, I'm an avid listener of Security Now and old and grey enough to join the remaining dots. There's two things going on, the first is password encoding.
+I'm not sure how you'd figure it out if you didn't know where to start. GIven a little experience with passwords and authentication you can join the remaining dots. There's two things going on, the first is password encoding.
 
 ### Password Encoding
 
-It's important to protect people's passwords from being stolen. We do that by 'encoding' or 'hashing' their planitext passwords before we store them. When the user authenticates, we encode the password they gave us and compare with our stored hash to see if the password was right,
+We protect passwords for by 'encoding' or 'hashing' them before we store them. When the user authenticates, we encode the password they gave us and compare with our stored hash to see if the password was right.
 
-The choice of encoding algorithm is important in this world of cloud computing, GPU and hardward acceleration. We need an algoriithm that needs a lot of CPU power to encode. We get a password encoder using the ["Bcrypt"](https://auth0.com/blog/hashing-in-action-understanding-bcrypt) algorithm by default, an algorithm that's been designed to withstand modern techniques and compute power.
+The choice of encoding algorithm is important in this world of cloud computing, GPUs and hardware acceleration. We need an algoriithm that needs a lot of CPU power to encode. We get a password encoder using the "Bcrypt" algorithm by default, an algorithm that's been designed to withstand modern techniques and compute power. You can read more about Bcrypt and how it helps keep your user database secure in [Auth0's article](https://auth0.com/blog/hashing-in-action-understanding-bcrypt) and Jeff Attwood's post on [Coding Horror](https://blog.codinghorror.com/speed-hashing/).
 
-See the connection yet? The choice of Bcrypt makes sense for protecting the credentials we're entrusted with, but we can't have this terrible performance. What's missing?
+See the connection yet? The choice of Bcrypt makes sense for protecting the credentials we're entrusted with, but do we do about this terrible performance?
 
 ### Sessions
 
-By default, the security config responds to our first authentication with a cookie containing a session ID. Session IDs are temporary and can't be used elsewhere, so they don't need protecting like passwords. If we'd been using a browser, or Gatling had been set up to make lots of requests as the same user, we'd have used the session ID and not seen a performance problem.
+By default, the security config responds to our first authentication with a cookie containing a session ID. That is exchanged without any encoding. Sessions come with lots of problems of their own, so we'll leave that one for another day. If we'd been using a browser, or Gatling had been set up to make lots of requests as the same user, we'd have used the session ID and not seen a performance problem.
 
 ## Reconfiguring our App
 
@@ -171,9 +167,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 }
 ```
-When we run our performance test one last time, we see that we have the performance and we have authentication. 
+When we run our performance test one last time, we see that we have performance and we have authentication.
+
+How fast can it go? WHen I push the request rate higher, I see that this app can actually handle around 2,000 requests per second. I won't bore you with more asciinema or the charts, but you can [play with the updated app yourself](https://github.com/brabster/performance-with-spring-boot/tree/2.0) if you want. 
+
+## The Future
+
+We can't leave the password encoder set to something insecure. It's not clear at this point in the project how authentcation will need to work so we're fine using this setup with our prototype, hard-coded password and test data. Performance will be an important part of figuring out what authentication solution to use!
 
 
-## How performant is the app now?
-
-## WHat about profiling?
