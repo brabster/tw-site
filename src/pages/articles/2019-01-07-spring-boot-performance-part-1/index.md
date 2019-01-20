@@ -185,4 +185,4 @@ Gatling's reports show you plenty of other interesting charts and figures. Find 
 
 ## Next Time
 
-That's the context, the tools and a simple codebase to get us started. Next time, we'll see how a performance problem shows itself and figure out how to resolve it.
+That's the context, the tools and a simple codebase to get us started. In [Part 2](/posts/spring-boot-performance-part-2), we see how a performance problem shows itself and figure out how to resolve it.
