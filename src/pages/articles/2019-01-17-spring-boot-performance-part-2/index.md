@@ -1,5 +1,5 @@
 ---
-title: "Exploring performance with Spring Boot and Gatling (Part 2)"
+title: "Performance with Spring Boot and Gatling (Part 2)"
 date: "2019-01-17T20:00:00.000Z"
 layout: post
 draft: false
