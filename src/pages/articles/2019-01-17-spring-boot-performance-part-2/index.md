@@ -1,5 +1,5 @@
 ---
-title: "On the Trail of Performance"
+title: "Exploring performance with Spring Boot and Gatling (Part 2)"
 date: "2019-01-17T20:00:00.000Z"
 layout: post
 draft: false
@@ -19,7 +19,7 @@ description: "Tracking down the suprising cause of our performance problem"
 In [part 1](/posts/spring-boot-performance-part-1), we built a simple Spring Boot webapp and demonstrated a surprising performance problem.
 A Gatling performance test simulating different numbers of users making a single request showed our webapp unable to keep up with 40 "users" making one request per second on my fairly powerful computer.
 
-We've already eliminate many problems, so we can use a process of elimination to figure out what's causing the problem. Let's start with a classic. I shared a link to part 1 and invited people to guess what the problem was. Thread starvation was amongst the responses, so let's take a look.
+We've already eliminate many potential culprits, so we continue using a process of elimination to figure out what's causing the problem. I shared a link to part 1 and invited people to guess what the problem was. Thread starvation was amongst the guesses, so let's take a look.
 
 ## How Many Threads?
 
@@ -39,7 +39,7 @@ That didn't help, so let's put the max thread count back to the default before w
 
 ## JSON Encoding
 
-Another unlikely candidate is the JSON encoding we're doing on our responses. Out of the box, Spring Boot uses the venerable [Jackson](https://github.com/FasterXML/jackson) library, but you never know, the default settings might be really ineffcient. Again, it's really easy to check so let's find out. We update the controller so that instead of returning Java object containing a String, it returns just a plain string, so from:
+Another unlikely candidate is the JSON encoding we're doing on our responses. Out of the box, Spring Boot uses the venerable [Jackson](https://github.com/FasterXML/jackson) library, but you never know, the default settings might be really inefficient. Again, it's really easy to check so let's find out. We update the controller so that instead of returning Java object containing a String, it returns just a plain string, so from:
 
 
 ```java
@@ -71,7 +71,7 @@ No detectable difference from the original results we got in part 1. Not really 
 
 ## Spring Security
 
-The next thing we can check easily is whether Spring Security is causing the problem somehow. Like the cases above, we've got well tried and tested software running with Spring Boot's sensible defaults, so it yet again seems unlikely. Something's causing the poor performance and Spring Security does lots of things though, like authentication and session management. We're running out of possible causes though so let's give it a try.
+The next thing we can check easily is whether Spring Security is causing the problem somehow. Like the cases above, we've got well tried and tested software running with Spring Boot's sensible defaults, so yet again, it seems unlikely. Something's causing the poor performance and Spring Security does lots of things though, like authentication and session management. We're running out of possible causes though so let's give it a try.
 
 The quick and easy way to check whether something that Spring Security is autoconfiguring in is causing the problem is to just omit the dependency. Let's delete `spring-security-web` and `spring-security-config` from our `pom.xml`. We can see there's less happening on startup, but will it handle the load better? Let's run the test.
 
@@ -114,7 +114,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 The Gatling test shows that the performance problem is back. Delete the `http.httpBasic()` line and the problem goes away. Something to do with authentication then. I didn't find anything in Spring Security or Spring Boot documentation to explain it.
 
-I'm not sure how you'd figure it out if you didn't know where to start. GIven a little experience with passwords and authentication you can join the remaining dots. There's two things going on, the first is password encoding.
+I'm not sure how you'd figure it out if you didn't know where to start. GIven a little experience with passwords and authentication you can join the remaining dots. There's two things going on that could be responsible. Let's look at password encoding.
 
 ### Password Encoding
 
@@ -175,7 +175,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 ```
 When we run our performance test one last time, we see that we have performance and we have authentication. [@glenathan](https://twitter.com/glenathan) takes the prize for correctly guessing the cause!
 
-How fast can it go? WHen I push the request rate higher, I see that this app can actually handle around 2,000 requests per second. I won't bore you with more asciinema or the charts, but you can [play with the updated app yourself](https://github.com/brabster/performance-with-spring-boot/tree/2.0) if you want. 
+How fast can it go? When I push the request rate higher, I see that this app can actually handle around 2,000 requests per second. I won't bore you with more asciinema or the charts, but you can [play with the updated app yourself](https://github.com/brabster/performance-with-spring-boot/tree/2.0) if you want. 
 
 ## The Future
 
