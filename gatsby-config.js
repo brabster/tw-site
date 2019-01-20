@@ -170,6 +170,7 @@ module.exports = {
     'gatsby-plugin-catch-links',
     'gatsby-plugin-react-helmet',
     'gatsby-plugin-postcss-sass',
+    'gatsby-plugin-twitter',
     {
       resolve: 'gatsby-plugin-netlify',
       options: {
