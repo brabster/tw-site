@@ -13,13 +13,20 @@ tags:
  - "gatling"
  - "java"
  - "scala"
-description: "Tracking down the suprising cause of our performance problem"
+description: "Tracking down a performance problem - (Threads | Sessions | Passwords)?"
 ---
 
-In [part 1](/posts/spring-boot-performance-part-1), we built a simple Spring Boot webapp and demonstrated a surprising performance problem.
-A Gatling performance test simulating different numbers of users making a single request showed our webapp unable to keep up with 40 "users" making one request per second on my fairly powerful computer.
+In [Part 1](/posts/spring-boot-performance-part-1), we built a simple Spring Boot webapp and demonstrated a surprising performance problem.
+A Gatling performance test simulating different numbers of users each making a single request showed our webapp unable to keep up with 40 "users" making one request per second on my fairly powerful computer.
 
-We've already eliminate many potential culprits, so we continue using a process of elimination to figure out what's causing the problem. I shared a link to part 1 and invited people to guess what the problem was. Thread starvation was amongst the guesses, so let's take a look.
+TL;DR we eliminate a couple of potential causes in the first part of the article. If you just want to know what was causing the problem, you can [go straight there](#password-encoding).
+
+We've already eliminate many potential culprits, so we continue using a process of elimination to figure out what's causing the problem. I shared a link to the first part and invited people to guess what the problem was.
+
+<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">Gatling showed us awful performance with a little Spring Boot app. I thought the story might be interesting or useful but quite long so I&#39;ve written part 1 - discovering and narrowing down the problem - and published it <a href="https://t.co/R7j46F7WSY">https://t.co/R7j46F7WSY</a></p>&mdash; brabster (@brabster) <a href="https://twitter.com/brabster/status/1085088894981455872?ref_src=twsrc%5Etfw">January 15, 2019</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+Thread starvation was amongst the guesses, so let's take a look.
 
 ## How Many Threads?
 
@@ -179,6 +186,6 @@ How fast can it go? When I push the request rate higher, I see that this app can
 
 ## The Future
 
-We can't leave the password encoder set to something insecure. It's not clear at this point in the project how authentcation will need to work so we're fine using this setup with our prototype, hard-coded password and test data. Performance will be an important part of figuring out what authentication solution to use!
+We can't leave the password encoder set to something weak like SHA256. We'll need to do much more to protect credentials in a production implmentation. It's not clear at this point in the project how authentcation will need to work so we're fine using this setup with our prototype, hard-coded password and test data. Performance will be a more important part of figuring out what authentication solution to use than we expected!
 
 
