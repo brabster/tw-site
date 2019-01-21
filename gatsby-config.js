@@ -1,7 +1,6 @@
 const cspDirectives = [
-  "default-src 'self' https://platform.twitter.com",
+  "default-src 'self'",
   "connect-src 'self' https://fonts.gstatic.com",
-  "frame-src https://platform.twitter.com/",
   "font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com"
 ];
@@ -166,7 +165,6 @@ module.exports = {
     'gatsby-plugin-catch-links',
     'gatsby-plugin-react-helmet',
     'gatsby-plugin-postcss-sass',
-    'gatsby-plugin-twitter',
     {
       resolve: 'gatsby-plugin-netlify',
       options: {
