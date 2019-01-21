@@ -1,10 +1,9 @@
 const cspDirectives = [
   "default-src 'self'",
-  "connect-src 'self' https://www.google-analytics.com https://fonts.gstatic.com",
-  "script-src 'self' 'unsafe-inline' https://www.google-analytics.com",
+  "connect-src 'self' https://fonts.gstatic.com",
+  "script-src 'self' 'unsafe-inline' https://platform.twitter.com/widgets.js",
   "font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com",
-  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  "img-src 'self' data: https://www.google-analytics.com"
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com"
 ];
 
 const directivesToCspHeader = headers => headers.join(';');
@@ -120,16 +119,13 @@ module.exports = {
           },
           'gatsby-remark-prismjs',
           'gatsby-remark-copy-linked-files',
-          'gatsby-remark-smartypants'
+          'gatsby-remark-smartypants',
+          'gatsby-remark-autolink-headers'
         ]
       }
     },
     'gatsby-transformer-sharp',
     'gatsby-plugin-sharp',
-    {
-      resolve: 'gatsby-plugin-google-analytics',
-      options: { trackingId: 'UA-' }
-    },
     {
       resolve: 'gatsby-plugin-google-fonts',
       options: { fonts: ['roboto:400,400i,500,700'] }
@@ -170,6 +166,7 @@ module.exports = {
     'gatsby-plugin-catch-links',
     'gatsby-plugin-react-helmet',
     'gatsby-plugin-postcss-sass',
+    'gatsby-plugin-twitter',
     {
       resolve: 'gatsby-plugin-netlify',
       options: {
