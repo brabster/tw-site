@@ -120,16 +120,13 @@ module.exports = {
           },
           'gatsby-remark-prismjs',
           'gatsby-remark-copy-linked-files',
-          'gatsby-remark-smartypants'
+          'gatsby-remark-smartypants',
+          'gatsby-remark-autolink-headers'
         ]
       }
     },
     'gatsby-transformer-sharp',
     'gatsby-plugin-sharp',
-    {
-      resolve: 'gatsby-plugin-google-analytics',
-      options: { trackingId: 'UA-' }
-    },
     {
       resolve: 'gatsby-plugin-google-fonts',
       options: { fonts: ['roboto:400,400i,500,700'] }
@@ -170,7 +167,6 @@ module.exports = {
     'gatsby-plugin-catch-links',
     'gatsby-plugin-react-helmet',
     'gatsby-plugin-postcss-sass',
-    'gatsby-plugin-twitter',
     {
       resolve: 'gatsby-plugin-netlify',
       options: {
