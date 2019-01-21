@@ -1,7 +1,7 @@
 const cspDirectives = [
-  "default-src 'self'",
+  "default-src 'self' https://platform.twitter.com",
   "connect-src 'self' https://fonts.gstatic.com",
-  "script-src 'self' 'unsafe-inline' https://platform.twitter.com/widgets.js",
+  "frame-src https://platform.twitter.com/",
   "font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com"
 ];
