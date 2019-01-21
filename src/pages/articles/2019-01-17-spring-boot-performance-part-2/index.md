@@ -19,7 +19,7 @@ description: "Tracking down a performance problem - (Threads | Sessions | Passwo
 In [Part 1](/posts/spring-boot-performance-part-1), we built a simple Spring Boot webapp and demonstrated a surprising performance problem.
 A Gatling performance test simulating different numbers of users each making a single request showed our webapp unable to keep up with 40 "users" making one request per second on my fairly powerful computer.
 
-TL;DR we eliminate a couple of potential causes in the first part of the article. If you just want to know what was causing the problem, you can [go straight there](#password-encoding).
+We eliminate a couple of potential causes in the first part of the article. If you just want to know what was causing the problem, you can [go straight there](#password-encoding).
 
 We've already eliminate many potential culprits, so we continue using a process of elimination to figure out what's causing the problem. I shared a link to the first part and invited people to guess what the problem was.
 
