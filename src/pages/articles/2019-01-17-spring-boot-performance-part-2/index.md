@@ -160,7 +160,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 
-        // choose a more efficient (and far weaked) hashing algorithm
+        // choose a more efficient (and far weaker) hashing algorithm
         final PasswordEncoder sha256 = new StandardPasswordEncoder();
 
         auth.inMemoryAuthentication()
