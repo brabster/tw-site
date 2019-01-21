@@ -1,10 +1,9 @@
 const cspDirectives = [
   "default-src 'self'",
-  "connect-src 'self' https://www.google-analytics.com https://fonts.gstatic.com",
-  "script-src 'self' 'unsafe-inline' https://www.google-analytics.com",
+  "connect-src 'self' https://fonts.gstatic.com",
+  "script-src 'self'" https://platform.twitter.com/widgets.js,
   "font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com",
-  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  "img-src 'self' data: https://www.google-analytics.com"
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com"
 ];
 
 const directivesToCspHeader = headers => headers.join(';');
