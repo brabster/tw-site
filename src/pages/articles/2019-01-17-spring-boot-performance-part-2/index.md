@@ -130,7 +130,7 @@ I'm not sure how you'd figure it out if you didn't know where to start. GIven a 
 
 We protect passwords for by 'encoding' or 'hashing' them before we store them. When the user authenticates, we encode the password they gave us and compare with our stored hash to see if the password was right.
 
-The choice of encoding algorithm is important in this world of cloud computing, GPUs and hardware acceleration. We need an algoriithm that needs a lot of CPU power to encode. We get a password encoder using the "Bcrypt" algorithm by default, an algorithm that's been designed to withstand modern techniques and compute power. You can read more about Bcrypt and how it helps keep your user database secure in [Auth0's article](https://auth0.com/blog/hashing-in-action-understanding-bcrypt) and Jeff Attwood's post on [Coding Horror](https://blog.codinghorror.com/speed-hashing/).
+The choice of encoding algorithm is important in this world of cloud computing, GPUs and hardware acceleration. We need an algorithm that needs a lot of CPU power to encode. We get a password encoder using the bcrypt algorithm by default, an algorithm that's been designed to withstand modern techniques and compute power. You can read more about bcrypt and how it helps keep your user database secure in [Auth0's article](https://auth0.com/blog/hashing-in-action-understanding-bcrypt) and Jeff Attwood's post on [Coding Horror](https://blog.codinghorror.com/speed-hashing/).
 
 See the connection yet? The choice of Bcrypt makes sense for protecting the credentials we're entrusted with, but do we do about this terrible performance?
 
@@ -144,7 +144,7 @@ By default, the security config responds to our first authentication with a cook
 
 ## Reconfiguring our App
 
-We'll override the password encoder to prove that it is causing the performance problem. As we're dealing with a test password, we don't need to worry about it not being secured. We update our `SecurityConfig` class like this:
+We'll override the password encoder to prove that it is causing the performance problem. *As we're dealing with a hardcoded test password rather than real user passwords*, we don't need to worry about it not being secured. We update our `SecurityConfig` class like this:
 
 ```java
 @Configuration
@@ -160,10 +160,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 
-        System.out.println(username);
-        System.out.println(password);
-
-        // choose a more efficient (and far weaked) hashing algorithm
+        // choose a more efficient (and far weaker) hashing algorithm
         final PasswordEncoder sha256 = new StandardPasswordEncoder();
 
         auth.inMemoryAuthentication()
@@ -183,9 +180,3 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 When we run our performance test one last time, we see that we have performance and we have authentication. [@glenathan](https://twitter.com/glenathan) takes the prize for correctly guessing the cause!
 
 How fast can it go? When I push the request rate higher, I see that this app can actually handle around 2,000 requests per second. I won't bore you with more asciinema or the charts, but you can [play with the updated app yourself](https://github.com/brabster/performance-with-spring-boot/tree/2.0) if you want. 
-
-## The Future
-
-We can't leave the password encoder set to something weak like SHA256. We'll need to do much more to protect credentials in a production implmentation. It's not clear at this point in the project how authentcation will need to work so we're fine using this setup with our prototype, hard-coded password and test data. Performance will be a more important part of figuring out what authentication solution to use than we expected!
-
-
