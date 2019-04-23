@@ -18,7 +18,8 @@ Contact me to see how I can help at [paul@tempered.works](mailto:paul@tempered.w
 
 ## Recent Projects
 
-- Research and Development project with [Dunnhumby](https://www.dunnhumby.com/)
+- Enterprise Matching with [Equal Experts](https://www.equalexperts.com)/Civil Service Client
+- Data Streaming and Data Ingestion with [People Source](https://www.peoplesource.co.uk)/[Dunnhumby](https://www.dunnhumby.com/)
 - Software Developer with fashion and retail startup Real Looker Ltd.
 - Principal Data Engineer with [Sky Betting and Gaming](https://skybetcareers.com/about-us)
 - Software Developer with content curation startup [Wakelet](https://wakelet.com)
