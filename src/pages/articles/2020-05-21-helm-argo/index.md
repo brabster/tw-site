@@ -1,6 +1,6 @@
 ---
 title: Helm Charts for Argo Workflows
-date: 2020-05-21T00:00:00+01:00
+date: 2020-05-21T12:00:00Z
 layout: post
 draft: false
 path: /posts/helm-charts-for-argo-workflows
@@ -35,7 +35,7 @@ spec:
       args: [ "{{workflow.name}}" ]
 ```
 
-WHen we try to install this template, we get an error because Helm tries to interpolate the Argo variable `workflow.name`.
+When we try to install this template, we get an error because Helm tries to interpolate the Argo variable `workflow.name`.
 
 ```
 $ helm install broken-example .
@@ -44,21 +44,21 @@ Error: parse error at (argo-hello-world.example/templates/hello-world.yml:12): f
 
 # Nesting Interpolation
 
-You *can* solve the problem by wrapping the Argo variable interpolation in Helm variable interpolation and backticks, like this:
+We *can* solve the problem by wrapping the Argo variable interpolation in Helm variable interpolation and backticks, like this:
 
 ```yaml
 args: [ {{ `"{{workflow.name}}"` }} ]
 ```
 This approach works.
 If our template doens't have too many Argo interpolations, this solution might be fine.
-More complex templates, like [this one](https://github.com/argoproj/argo/blob/master/examples/parallelism-nested.yaml), can use a lot or Argo string interpolation.
+More complex templates, like [this one](https://github.com/argoproj/argo/blob/master/examples/parallelism-nested.yaml), can use a lot of Argo interpolated expressions.
 Manually escaping those expressions would be a pain, and render the workflow templates pretty unreadable. There's a better way.
 
 # Changing Delimiters
 
 If we could chanee the delimiters that either Argo or Helm use to start and end their interpolation expressions, then the two tools could work together. Neither supports that directly (although Argo has [an open issue to implement it](https://github.com/argoproj/argo/issues/2430)). All is not lost though, because Helm supports post-processing the Kubernetes manifests it produces. We can use `sed` to find and replace alternative delimiters for the Argo expressions.
 
-The new delimiters cannot be `{{` and `}}`, and they cannot appear elsewhere in the script. I'll use `{-` and `-}`. Here's an new version of the example workflow manifest with the new delimiters. 
+The new delimiters cannot be `{{` and `}}`, and they shouldn't appear elsewhere in the script, because they will be replaced with the original delimiters. I'll use `{-` and `-}`. Here's an new version of the example workflow manifest with the new delimiters. We've also added the release name Helm variable to the workflow template name, so show that Helm interpolation is still working.
 
 ```yaml
 apiVersion: argoproj.io/v1alpha1
@@ -83,7 +83,7 @@ The last piece of the puzzle is a shell script to replace the new delimiters aft
 sed 's/{-/{{/'g | sed 's/-}/}}/g' <&0
 ```
 
-We've also added the release name Helm variable to the workflow template name, so show that Helm interpolation is still working. Let's install.
+We'll call that script `argo-post-processor.sh`. Let's use it to install the chart.
 
 ```
 $ helm install my-release working-chart --post-renderer ./argo-post-processor.sh 
