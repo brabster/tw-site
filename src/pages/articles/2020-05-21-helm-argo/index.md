@@ -16,7 +16,7 @@ description: Using Helm with Argo is simpler than you think.
 Argo is a lightweight, Kubernetes-native workflow solution.
 Workflows are implemented as Kuberenetes manifests, so Helm is a natural choice for packaging your workflows.
 
-Helm also supports templating values into Kuberetes manifests, which can e really helpful - but thst's where we run into a problem. Helm uses mustache-style string interpolation, and so does Argo.
+Helm also supports templating values which can be really helpful - but thst's where we run into a problem. Helm uses mustache-style string interpolation, and so does Argo.
 
 Here's an example of the problem, based on [Argo's hello world example](https://github.com/argoproj/argo/blob/master/examples/hello-world.yaml).
 
@@ -44,21 +44,21 @@ Error: parse error at (argo-hello-world.example/templates/hello-world.yml:12): f
 
 # Nesting Interpolation
 
-We *can* solve the problem by wrapping the Argo variable interpolation in Helm variable interpolation and backticks, like this:
+We *can* solve the problem by wrapping the Argo variable interpolation with Helm variable interpolation and backticks, like this:
 
 ```yaml
 args: [ {{ `"{{workflow.name}}"` }} ]
 ```
 This approach works.
-If our template doens't have too many Argo interpolations, this solution might be fine.
+If our template doesn't have too many Argo interpolations, this solution might be fine.
 More complex templates, like [this one](https://github.com/argoproj/argo/blob/master/examples/parallelism-nested.yaml), can use a lot of Argo interpolated expressions.
-Manually escaping those expressions would be a pain, and render the workflow templates pretty unreadable. There's a better way.
+Manually escaping those expressions would be irritating, and it would render the workflow templates pretty unreadable. There's a better way.
 
 # Changing Delimiters
 
-If we could chanee the delimiters that either Argo or Helm use to start and end their interpolation expressions, then the two tools could work together. Neither supports that directly (although Argo has [an open issue to implement it](https://github.com/argoproj/argo/issues/2430)). All is not lost though, because Helm supports post-processing the Kubernetes manifests it produces. We can use `sed` to find and replace alternative delimiters for the Argo expressions.
+If we could change the delimiters that either Argo or Helm use to start and end their interpolation expressions, then the two tools could work together. Neither supports that directly (although Argo has [an open issue to implement it](https://github.com/argoproj/argo/issues/2430)). All is not lost though, because Helm supports post-processing the Kubernetes manifests it produces. We can use `sed` to find and replace alternative delimiters for the Argo expressions.
 
-The new delimiters cannot be `{{` and `}}`, and they shouldn't appear elsewhere in the script, because they will be replaced with the original delimiters. I'll use `{-` and `-}`. Here's an new version of the example workflow manifest with the new delimiters. We've also added the release name Helm variable to the workflow template name, so show that Helm interpolation is still working.
+The new delimiters cannot be `{{` and `}}`, and they shouldn't appear elsewhere in the script, because they will be replaced with the original delimiters. I'll use `{-` and `-}`. Here's an new version of the example workflow manifest with the new delimiters. We've also added the release name Helm variable to the workflow template name, to show that Helm interpolation is still working.
 
 ```yaml
 apiVersion: argoproj.io/v1alpha1
