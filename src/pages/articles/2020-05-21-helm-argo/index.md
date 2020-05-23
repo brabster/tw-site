@@ -1,9 +1,9 @@
 ---
 title: Helm Charts for Argo Workflows
-date: 2020-05-21T12:00:00Z
+date: 2020-05-23T12:00:00Z
 layout: post
 draft: false
-path: /posts/helm-charts-for-argo-workflows
+path: /posts/2020-05-23-helm-charts-for-argo-workflows
 category: Data Engineering
 tags:
  - kubernetes
@@ -19,9 +19,9 @@ description: Using Helm with Argo is easy with a --post-renderer.
 </div>
 
 Argo is a lightweight, Kubernetes-native workflow solution.
-Workflows are implemented as Kuberenetes manifests, so Helm is a natural choice for packaging your workflows.
+Workflows are implemented as Kuberenetes manifests, so Helm is a natural choice for packaging them.
 
-Helm also supports templating values which can be really helpful - but thst's where we run into a problem. Helm uses mustache-style string interpolation, and so does Argo.
+Helm also supports templating values which can be really helpful - but that's where we run into a problem. Helm uses mustache-style string interpolation, and so does Argo.
 
 Here's an illustration of the problem, based on [Argo's hello world example](https://github.com/argoproj/argo/blob/master/examples/hello-world.yaml).
 
