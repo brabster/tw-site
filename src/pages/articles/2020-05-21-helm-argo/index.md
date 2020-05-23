@@ -19,7 +19,7 @@ description: Using Helm with Argo is easy with a --post-renderer.
 </div>
 
 Argo is a lightweight, Kubernetes-native workflow solution.
-Workflows are implemented as Kuberenetes manifests, so Helm is a natural choice for packaging them.
+Workflows are implemented as Kubernetes manifests, so Helm is a natural choice for packaging them.
 
 Helm also supports templating values which can be really helpful - but that's where we run into a problem. Helm uses mustache-style string interpolation, and so does Argo.
 
@@ -100,7 +100,7 @@ STATUS: deployed
 REVISION: 1
 TEST SUITE: None
 ```
-Running the workflow shows that both types of interpolation have been applied successfully. Note the release name `my-release` in the workflow and pod names, and the worflow UID in the whalesay output.
+Running the workflow shows that both types of interpolation have been applied successfully. Note the release name `my-release` in the workflow and pod names, and the workflow UID in the whalesay output.
 
 ![Screenshot of the Helm-processed workflow running successfully, with interpolated values visible](argo-success.png)
 
