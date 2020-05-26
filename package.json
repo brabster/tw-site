@@ -15,10 +15,10 @@
   "author": "Paul Brabban <paul@tempered.works>",
   "license": "MIT",
   "dependencies": {
-    "bluebird": "^3.5.1",
-    "gatsby": "^1.9.277",
+    "bluebird": "^3.7.1",
+    "gatsby": "^1.9.279",
     "gatsby-link": "^1.6.46",
-    "gatsby-plugin-catch-links": "^1.0.24",
+    "gatsby-plugin-catch-links": "^1.0.26",
     "gatsby-plugin-feed": "^1.3.25",
     "gatsby-plugin-google-fonts": "^0.0.4",
     "gatsby-plugin-netlify": "^1.0.21",
@@ -38,22 +38,22 @@
     "gatsby-source-filesystem": "^1.5.39",
     "gatsby-transformer-remark": "^1.7.44",
     "gatsby-transformer-sharp": "^1.6.27",
-    "lodash": "^4.17.10",
-    "prismjs": "^1.15.0",
-    "react": "^16.4.2",
-    "react-disqus-comments": "^1.2.0",
-    "react-helmet": "^5.2.0"
+    "lodash": "^4.17.15",
+    "prismjs": "^1.17.1",
+    "react": "^16.11.0",
+    "react-disqus-comments": "^1.4.0",
+    "react-helmet": "^5.2.1"
   },
   "devDependencies": {
-    "eslint": "^5.4.0",
-    "eslint-config-airbnb": "^17.1.0",
-    "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-jsx-a11y": "^6.1.1",
-    "eslint-plugin-react": "^7.11.1",
     "babel-eslint": "^8.2.6",
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb": "^17.1.1",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-react": "^7.16.0",
     "gh-pages": "^1.2.0",
-    "lost": "^8.3.0",
+    "lost": "^8.3.1",
     "postcss-pxtorem": "^4.0.1",
-    "prettier": "^1.14.2"
+    "prettier": "^1.18.2"
   }
 }
