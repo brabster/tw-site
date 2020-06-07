@@ -3,7 +3,7 @@ title: Bashing Alpine
 date: 2020-06-07T12:00:00Z
 layout: post
 draft: false
-path: /posts/2020-06-07-alpine-bash
+path: /posts/2020-06-07-bashing-alpine
 category: devops
 tags:
  - alpine
