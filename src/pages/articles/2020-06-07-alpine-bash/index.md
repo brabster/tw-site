@@ -21,9 +21,9 @@ description: For those times when a script is both missing and exactly where it 
 </div>
 
 
-So this annoying and trivial little problem catches me out oevery so often. I never remember what causes it! For context, it's usually when I'm working in Docker containers on a build.
+So this annoying and trivial little problem catches me out every so often. I never remember what causes it! For context, it usually happens when I'm working in Docker containers on a build.
 
-Let's say we have a script like this:
+Let's say we have a script like this, saved as `bash-script.sh`:
 
 ```sh
 #!/bin/bash
@@ -31,7 +31,7 @@ Let's say we have a script like this:
 echo "Hello, Bash"
 ```
 
-Nice and simple. Let's build a Docker image with it, and then run it. Here's the Dockerfile.
+Nice and simple. Let's build a Docker image with it that runs it. Here's the Dockerfile.
 
 
 ```dockerfile
@@ -59,7 +59,7 @@ Aww, snap! The script has to be there, we *just* copied it into place. So why do
 
 The answer is... because we're trying to run a Bash script on an Alpine image. Alpine doesn't ship with a Bash shell, so the error is really saying that `!#/bin/bash` isn't found, not that the script itself isn't found. Catches me out every time!
 
-The fix? `#!/bin/sh` instead, and avoid any Bash-specific syntax. Given this script saved as `sh-script.sh`:
+The fix? `#!/bin/sh` instead. Might need to avoid any Bash-specific syntax. Given this script saved as `sh-script.sh`:
 
 ```sh
 #!/bin/sh
