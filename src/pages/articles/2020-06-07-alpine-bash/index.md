@@ -21,7 +21,7 @@ description: For those times when a script is both missing and exactly where it 
 </div>
 
 
-So this annoying and trivial little problem catches me out every so often. I never remember what causes it! For context, it usually happens when I'm working in Docker containers on a build.
+So this annoying and trivial little problem catches me out every so often. I am always misled by the error message! You'll see what I mean shortly. For context, it usually happens when I'm working in Docker containers on a build.
 
 Let's say we have a script like this, saved as `bash-script.sh`:
 
