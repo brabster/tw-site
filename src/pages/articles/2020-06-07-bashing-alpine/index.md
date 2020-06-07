@@ -57,7 +57,7 @@ Error: error building at STEP "RUN ./bash-script.sh": error while running runtim
 
 Aww, snap! The script has to be there, we *just* copied it into place. So why do we get an error saying that `./bash-script.sh` is not found?
 
-The answer is... because we're trying to run a Bash script on an Alpine image. Alpine doesn't ship with a Bash shell, so the error is really saying that `!#/bin/bash` isn't found, not that the script itself isn't found. Catches me out every time!
+The answer is... because we're trying to run a Bash script on an Alpine image. Alpine doesn't ship with a Bash shell, so the error is really saying that the interpreter `/bin/bash` isn't found, not that the script itself isn't found. Catches me out every time!
 
 The fix? `#!/bin/sh` instead. Might need to avoid any Bash-specific syntax. Given this script saved as `sh-script.sh`:
 
